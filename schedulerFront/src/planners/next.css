@@ -1,0 +1,187 @@
+
+
+.next_pagemain {
+    margin-top: 20px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.schedule-table {
+  width: 77%;
+  border-collapse: collapse;
+  margin-bottom: 10px;
+}
+.combination_list {
+  background-color: #255799;
+  color: #FECC07; 
+}
+.combination_list:hover {
+  cursor: pointer;
+  background-color: rgb(106, 106, 106);
+}
+.combination {
+  padding: 7px; /* 패딩 */
+  
+  min-width: 150px; /* 최소 너비 설정 */
+  max-width: 200px; /* 최대 너비 설정 */
+  overflow: hidden; /* 내용이 넘치면 숨김 */
+  text-overflow: ellipsis; /* 넘치는 텍스트에 줄임표 추가 */
+  white-space: nowrap; /* 텍스트 줄 바꿈 방지 */
+}
+.combination span{
+  font-size: 15px;
+  color: #ddd;
+}
+
+.schedule-table td {
+  border: 1px solid #ddd; /* 셀 경계선 */
+  overflow: hidden; /* 내용이 넘치면 숨김 */
+  text-overflow: ellipsis; /* 넘치는 텍스트에 줄임표 추가 */
+  white-space: nowrap; /* 텍스트 줄 바꿈 방지 */
+}
+.schedule-table th, .schedule-table td {
+  border: 1px solid #ccc;
+  text-align: center;
+}
+
+.combination_details_table {
+  max-height: 300px; /* 최대 높이 설정 */
+  width: inherit;
+  overflow-y: auto; /* 세로 스크롤 추가 */
+}
+
+.course-cell {
+  vertical-align: top;
+  background-color: rgb(255, 255, 223);
+
+}
+.course-cell p {
+  margin: 0;
+}
+
+.Lec_cell {
+  text-align: start;
+}
+
+.Lec_table {
+  width: 100%; /* 너비 100% */
+  border-collapse: collapse; /* 테이블 경계 합치기 */
+}
+.lecture_table {
+  width: 100%;
+  margin-top: 10px;
+}
+.lecture_table, .lecture_table td {
+  border: 1px solid #ddd;
+  padding-top: 2.5px;
+  padding-bottom: 2.5px;
+  font-size: 0.9em;
+}
+
+.Dis_cell {
+  text-align: start;
+
+}
+.Dis_table {
+  width: 100%; /* 너비 100% */
+  border-collapse: collapse; /* 테이블 경계 합치기 */
+}
+.discussion_table {
+  width: 100%;
+  margin-top: 10px;
+  transition: background-color 0.3s; /* 부드러운 전환 효과 */
+}
+.discussion_table, .discussion_table td {
+  border: 1px solid #ddd;
+  padding-top: 2.5px;
+  padding-bottom: 2.5px;
+  font-size: 0.9em;
+}
+
+.courseNumSelect label {
+  font-size: 24px; /* Make it the same size as "Next Quarter Planner" which is also 24px */
+  font-weight: bold; /* Optionally, make it bold to match the title */
+  color: #333; /* Optional: adjust color if needed to match title color */
+}
+
+.courseNumSelect select {
+  font-size: 18px; /* Adjust font size inside the dropdown */
+  padding: 10px; /* Add padding for better spacing */
+  border: 2px solid #ddd; /* Add a border */
+  border-radius: 8px; /* Round the corners */
+  background-color: white; /* Set a white background */
+  appearance: none; /* Remove default browser styling */
+  -webkit-appearance: none; /* For Safari */
+  -moz-appearance: none; /* For Firefox */
+  cursor: pointer; /* Indicate it's interactive */
+  margin-left: 10px; /* Add some spacing from the label */
+  margin-top: 5px; /* Add some top margin to align vertically */
+  transition: border-color 0.3s, box-shadow 0.3s; /* Add transition for hover effect */
+}
+
+.courseNumSelect select:hover,
+.courseNumSelect select:focus {
+  border-color: #aaa; /* Slightly darker border on hover/focus */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Add a subtle shadow on hover/focus */
+  outline: none; /* Remove default focus outline */
+}
+
+/* Style for the dropdown arrow (if you want to customize it further) */
+.courseNumSelect {
+  position: relative; /* Needed for positioning the custom arrow */
+  display: flex; /* To align label and select nicely */
+  align-items: center; /* Vertically align label and select */
+}
+
+.courseNumSelect::after {
+  /* content: '\25BC';  Unicode for a down arrow - REMOVED to hide the arrow */
+  position: absolute;
+  right: 10px; /* Position arrow to the right */
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none; /* Make sure it doesn't interfere with clicks */
+  color: #777; /* Arrow color */
+  font-size: 0.8em; /* Adjust arrow size */
+}
+
+/* next.css (or wherever your styles go) */
+
+/* Dim the background, center the popup, etc. */
+.filter_popup {
+  position: fixed; 
+  top: 0; 
+  left: 0; 
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.3); /* semi-transparent overlay */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999; /* on top of everything */
+}
+
+/* The content box */
+.filter_popup_content {
+  background: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  min-width: 300px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+}
+
+#filter_icon {
+  cursor: pointer;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  margin-right: 2rem;
+}
+
+/* Hover effect */
+#filter_icon:hover {
+  opacity: 0.5;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}

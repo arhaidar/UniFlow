@@ -1,0 +1,162 @@
+
+.main_container {
+    background: #f2f2f2; /* or your chosen background color */
+    /* padding: 1rem; */
+    /* padding: 0 1rem 1rem; */
+    min-height: 100vh;
+    /* border: 5px solid green; */
+    margin-top: 0;
+}
+.main {
+    width: 71.4%; /* 5/7 비율 */
+    margin: 0 auto; /* 가운데 정렬 */
+    display: flex;
+    flex-direction: column;
+    border: 3px solid red;
+  }
+  
+/* ================= major ================ */
+.major {
+  font-family: 'Times New Roman', Times, serif;
+  margin-bottom: 15px;
+}
+.major h4 {
+  font-size: 22px;
+  margin:0 0 0 0;
+}
+/* ================= END major ================ */
+
+/* ================= container ================ */
+.container {
+  margin-bottom: 20px;
+}
+.container .p_stlye {
+  font-size: 20px;
+  margin:0 0 0 0;
+  padding-bottom: 4px;
+  text-decoration: underline;
+}
+.button_selections {
+  display: flex;
+  gap: 0;
+  margin-bottom: -1px;
+}
+
+.selections {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  background-color: #f0f0f0;
+  cursor: pointer;
+  transition: transform 0.5s ease;
+}
+.selections.selected {
+  background-color: white;
+  border-top: 3px solid orange; /* Orange top border */
+  font-weight: bold;
+}
+
+/* Chevron icon transition */
+.selections svg {
+  color: orange;
+  transition: transform 0.5s ease;
+}
+
+/* When expanded, rotate the chevron */
+.selections.selected svg {
+  transform: rotate(180deg);
+}
+
+/* List container */
+.list_container {
+  margin-top: 0;
+  padding: 12px;
+ /* need shadow border */
+  background-color: #fff;
+  box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.2);
+}
+/* ================= END container ================ */
+
+
+
+
+/*====================== planner ======================*/
+.planner {
+  box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.2);
+}
+.planner .p_stlye {
+  font-size: 20px;
+  margin:0 0 0 0;
+  padding-bottom: 30px;
+  text-decoration: underline;
+}
+
+.icon {
+  margin-bottom: 28px;
+  display: inline-block; /* 아이콘을 중앙에 배치 */
+  border-bottom: 2px solid orange; /* Orange top border */
+}
+
+.icon img {
+  max-width: 60%; /* 반응형 이미지 */
+  height: auto; /* 비율 유지 */
+}
+
+.next_content p {
+  margin-block-start: 0;
+  margin-block-end: 0;
+}
+.next_content .list-item {
+display: flex;
+align-items: center; /* 아이콘과 텍스트 정렬 */
+margin-bottom: 10px; /* 각 항목 간 간격 */
+}
+.next_content .check-icon {
+margin-right: 10px; /* 아이콘과 텍스트 간의 간격 */
+font-size: 16px; /* 아이콘 크기 조정 */
+margin: 0;
+}
+
+.planners {
+    display: flex;
+    justify-content: center; /* 중앙 정렬 */
+    gap: 20px; /* 플래너 간의 간격 */
+    margin-bottom: 40px;
+}
+
+.loading-container {
+  text-align: center;
+  margin-top: 20px;
+}
+.loading-container img {
+  width: 50px; /* Adjust size as needed */
+  height: 50px;
+}
+.next_planner, .alternative_planner, .entire_planner {
+    background-color: rgb(173, 192, 230); /* 연한 파란색 배경 */
+
+    display: flex;
+    flex-direction: column; /* 세로 정렬 */
+    align-items: center; /* 중앙 정렬 */
+    width: 200px; /* 각 플래너의 너비 조정 */
+    text-align: center; /* 텍스트 중앙 정렬 */
+    border: 1px solid #ccc; /* 테두리 */
+    padding: 10px; /* 여백 */
+    border-radius: 5px; /* 모서리 둥글게 */
+}
+
+/*================NEXT PAGE====================*/
+.nextPlan_page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.nextPlan_page h5 {
+  margin: 0;
+}
+
+button {
+    margin-top: 10px; /* 버튼과 내용 간의 간격 */
+}
+/*====================== END planner ======================*/

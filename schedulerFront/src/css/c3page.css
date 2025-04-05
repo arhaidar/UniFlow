@@ -1,0 +1,41 @@
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    gap: 20px;
+}
+
+.box {
+    width: 100px;
+    height: 100px;
+    background-color: lightblue;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.box.selected {
+    width: 150px;
+    background-color: blue;
+    color: white;
+}
+
+.box.pushed {
+    width: 50px;
+    opacity: 0.6;
+}
+
+.box:nth-child(1).selected ~ .box {
+    transform: translateX(100px);
+}
+
+.box:nth-child(2).selected ~ .box {
+    transform: translateX(-100px);
+}
+
+.box:nth-child(3).selected ~ .box {
+    transform: translateX(-100px);
+}

@@ -1,0 +1,58 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600&display=swap');
+
+.dashboard {
+    display:flex;
+    height: 100vh;
+  }
+.logo-container {
+  margin:0;
+  padding-top: 10px;
+  user-select: none;
+}
+  .home-btn {
+    font-family: 'Montserrat', sans-serif; /* Montserrat 글꼴 적용 */
+    font-size: 40px;
+    text-decoration: none; /* 링크 밑줄 제거 */
+    color: #fecc07; /* 글꼴 색상 설정 */
+    font-style: normal; /* 기본 스타일 설정 (이탤릭이 아닐 경우) */
+    font-weight: 600; /* 글자 두께 설정 */
+    padding-left: 10px;
+  } 
+  .logo-container span{
+    font-size: 20px;
+    color: white;
+  }
+
+  .sidebar {
+    width: 180px;
+    height: 100%; /* 고정된 높이 */
+    background-color:#255799;
+    color: white;
+  }
+  
+  .sidebar ul {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .sidebar li {
+    margin-bottom: 10px;
+  }
+  .link-container a {
+    color: white;
+    text-decoration: none;
+    display: block;
+    padding: 10px;
+  }
+  .link-container a:hover {
+    background-color: #c6beb5;
+  }
+
+  
+  .main-content {
+    width: calc(100% - 250px); /* 사이드바 너비를 뺀 나머지 공간 */
+    height: 100%; /* 고정된 높이 */
+    overflow-y: auto; /* 내용이 넘칠 경우 스크롤 가능 */
+    padding: 20px; /* 패딩 추가 */
+}
+  

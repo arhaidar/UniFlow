@@ -1,0 +1,297 @@
+/* cs1_ver2.css */
+
+.whole {
+    /* border: 5px solid blueviolet; */
+    margin-top: 0px;
+    margin-left: 100px;
+    margin-right: 170px;
+}
+
+.slick-dots {
+    list-style: none;
+    justify-content: center;
+    padding: 0;
+    z-index: 1;
+    position: relative;
+}
+  
+.slick-dots li button::before {
+    font-size: 12px;
+    color: gray;
+    transition: all 0.3s ease;
+}
+  
+.slick-dots li.slick-active button::before {
+    color: black;
+    font-size: 16px;
+}
+.sub_container2 {
+    margin-top: 22px;
+    margin-left: 20px;
+    margin-right: 70px;
+}
+/* Outer container for the entire page */
+
+
+.zot-header {
+    margin-bottom: 0.25rem;  
+    margin-top: 0;
+    /* border: 5px solid red; */
+    /* padding: 10px; */
+    width: 100%;
+    box-sizing: border-box;
+    /* border: 5px solid red; */
+} 
+
+.zot-title {
+    font-size: 2rem;
+    font-weight: normal;   /* ensure “Auto Planner” is not bold */
+    font-family: Arial, Helvetica, sans-serif;
+    margin-top: 0px;
+    margin-bottom: 0px;
+    background-color: #255799;
+    display: inline-block;
+    color: white;
+    /* border: 5px solid rgb(255, 79, 220); */
+    white-space: nowrap;
+    /* margin-left: 100px; */
+    border-radius: 2px;
+    height: 50px;
+    align-content: center;
+    padding: 20px;
+
+} 
+
+.zot-title-link {
+    text-decoration: none;  /* Remove underline for link */
+    color: inherit;         /* Keep the color consistent with the surrounding text */
+}
+
+#zot-bold {
+    font-size: 2.4rem;     /* a bit larger than 2rem */
+    font-weight: bold;     /* keep “UCI” bold */
+    font-family: 'Gotham', 'Helvetica Neue', Helvet;                                                                                                                                                                                        
+}
+
+.zot-underline {
+    width: auto;   
+    height: 2px;    /* thickness of the line */
+    background: #FECC07; /* bright yellow */
+    margin: 0.5rem auto 0 auto; /* center horizontally */
+    border-radius: 5px; /* rounded corners */
+    display: block;
+    margin-top: 0;
+}
+/* 
+#Step-1 {
+    margin-left: 110px;  
+    display: block;
+    margin-top: 0px;
+    margin-bottom: 50px;
+} */
+  
+
+/* The slider wrapper (to center or size the carousel) */
+.cs1_slider {
+    width: 90%;
+    margin: 0 auto;
+    /* border: 5px solid #FECC07; */
+    display: block;
+}
+
+.custom-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 50px; /* Adjust width */
+    height: 150px; /* Tall height */
+    background-color: #3b5ea9; /* Blue color */
+    border-radius: 15px; /* Rounded corners */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 2;
+    transition: background 0.3s;
+    border: 2px solid black; /* Optional border */
+}
+  
+.custom-arrow:hover {
+    background-color: #2a4d8a; /* Darker blue on hover */
+}
+  
+.arrow-shape {
+    font-size: 30px; /* Bigger arrow size */
+    color: #f4c542; /* Yellow arrow */
+    font-weight: bold;
+}
+  
+  /* Positioning */
+.next-arrow {
+    right: -60px; /* Move to right */
+}
+  
+.prev-arrow {
+    left: -60px; /* Move to left */
+}
+  
+
+/* Each slide’s content area */
+.slide-content {
+/* The outer spacing */
+    padding: 2rem; 
+    /* mimic a “card” look */
+    background: white;
+    border-radius: 40px; 
+    border: 3px solid #ccc;
+    box-shadow: 2px 2px 8px rgba(0,0,0,0.2);
+
+    /* If you want a narrower card, limit width, auto side margins: */
+    max-width: 70%;
+    min-height: 700px;
+    max-height: 700px;
+
+    overflow: auto;
+    display: flex;
+    flex-direction: column;
+
+    margin-left: 10rem;
+    position: relative;
+    /* border: 5px solid red; */
+}
+
+.scroll-container {
+    flex: 1; /* Takes available space */
+    overflow-y: auto;
+    padding-right: 10px; /* Space for scrollbar */
+    /* border: 5px solid blue; */
+}
+
+.slide-content .btn {
+    position: relative;
+    padding: 0.7rem 1.4rem;
+    font-size: 1rem;
+    font-weight: 600;
+    color: rgb(0, 0, 0);
+    border: 1px solid #000000;
+    border-radius: 8px;
+    cursor: pointer;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    margin-bottom: 0.5em;
+}
+  
+  /* Liquid Fill Effect */
+.slide-content .liquid {
+    background: linear-gradient(#255799 0 0) no-repeat calc(200% - var(--p, 0%)) 
+      100% / 200% var(--p, 0.2em);
+    transition: 0.3s var(--t, 0s), background-position 0.3s calc(0.3s - var(--t, 0s));
+}
+  
+.slide-content .liquid:hover {
+    --p: 100%;
+    --t: 0.3s;
+    color: white;
+    box-shadow: 0 0.3em 1em #575859;
+}
+  
+
+/* The specialization button row */
+.upper_div_specialization_list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin: 1rem 0;
+}
+.upper_div_specialization_list button {
+    background-color: #fff;
+    border: 2px solid #333;
+    border-radius: 8px;
+    padding: 0.5rem 0.8rem;
+    cursor: pointer;
+}
+.upper_div_specialization_list button:hover {
+    background-color: #eee;
+}
+
+/* The “Next” button on the last slide, bottom-right. */
+.specialization-next-btn {
+    margin-top: 1.5rem;
+    text-align: right;
+}
+.specialization-next-btn button {
+    background: #0074d9;
+    color: #fff;
+    border: none;
+    padding: 0.6rem 1rem;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 500;
+}
+.specialization-next-btn button:hover {
+    background: #005fa3;
+}
+
+/* Ensure checkbox and text are properly aligned */
+.clickable-box {
+    margin: 4px 0;  /* Increase vertical margin for spacing */
+    padding: 6px 6px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    cursor: pointer;
+    /* background: #fff; */
+    display: flex; /* Ensure content aligns properly */
+    align-items: center; /* Align checkbox and text */
+    gap: 10px; /* Add spacing between checkbox and text */
+}
+
+
+/* On hover, slightly change background */
+.clickable-box:hover {
+    background: #f9f9f9;
+}
+
+/* Hide default checkbox */
+.custom-checkbox {
+    width: 18px;
+    height: 18px;
+    border: 2px solid black;
+    border-radius: 5px;
+    background: white;
+    cursor: pointer;
+    display: inline-block;
+    position: relative;
+}
+
+/* Custom checkmark */
+.custom-checkbox:checked::after {
+    font-size: 18px;
+    color: white;
+    text-align: center;
+    line-height: 24px;
+    display: block;
+    width: 100%;
+    height: 100%;
+    background: #255799;
+}
+
+/* Make sure label works as expected */
+.checkbox-label {
+    cursor: pointer;
+}
+
+.checkbox-text {
+    font-size: 16px;
+    user-select: none; /* Prevents text selection */
+}
+.checkbox-text.name {
+    color: #f78d2d;
+    text-decoration: none;
+}
+.vertical-line {
+    width: 0.7px; /* 선의 두께 */
+    background-color: black; /* 선의 색상 */
+    height: 20px; /* 선의 높이 */
+    display: inline-block; /* 인라인 블록으로 설정 */
+    margin: 0 10px; /* 여백 조정 */
+}

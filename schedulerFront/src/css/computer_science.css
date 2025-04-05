@@ -1,0 +1,22 @@
+.navigation-container {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 20px;
+}
+  
+.nav-button {
+    padding: 10px 20px;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    background-color: #255799;
+    color: white;
+}
+  
+.nav-button:hover {
+    background-color: #f4c542;
+    color: #000;
+}
+  

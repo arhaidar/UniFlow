@@ -1,0 +1,63 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+body {
+    font-family: 'Poppins', sans-serif;
+}
+
+.indialog {
+    max-width: 500px;
+    margin: 36px auto;
+    padding: 24px 32px;
+    border-radius: 2px;
+    background-color: #fff;
+    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.15);
+    color: #1b3d6d;
+}
+.i-wrapper {
+    height: 100%;
+}
+.i-main {
+    display: flex;
+    flex-direction: column;
+    height: inherit;
+}
+.i-heading {
+    margin-bottom: 24px;    
+    font: 600 24px/1.3 'Poppins', sans-serif;
+    text-align: center;
+}
+.i-label {
+    font-size: 14px;
+    font-weight: 400;
+    display: block;
+    margin-bottom: 6px;
+    color: #555;
+}
+.i-searchbar {
+    font-size: 14px;
+    text-align: center;
+    padding: 7px;
+    margin: 12px 0 28px;
+    width: 100%;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+.i-majors {
+    margin-bottom: 14px;
+    border: 1px solid #255799;
+    border-radius: 6px;
+    padding: 10px;
+    text-align: center;
+    cursor: pointer;
+    transition: background 0.3s, transform 0.2s;
+}
+.i-majors:hover {
+    background-color: #fecd0783;
+    transform: scale(1.02);
+}
+.i-link {
+    text-decoration: none;
+    color: #255799;
+    font-weight: 400;
+    display: block;
+    text-align: center;
+}

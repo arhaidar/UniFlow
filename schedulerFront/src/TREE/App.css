@@ -1,0 +1,19 @@
+.tree {
+    font-family: Arial, sans-serif;
+    margin-left: 20px;
+  }
+  
+  .tree-node {
+    margin: 10px 0;
+  }
+  
+  .tree-node span {
+    font-weight: bold;
+    display: inline-block;
+    margin-left: 10px;
+  }
+  
+  .children {
+    margin-left: 20px;
+  }
+  

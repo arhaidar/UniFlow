@@ -1,0 +1,11 @@
+/* App.css or a separate CSS file */
+.taken_page {
+    background-color: #ea1515fa;
+}
+/* #ebebebfa; */
+
+.upper_div_specialization_list {
+    display: flex;
+    gap: 5px; /* 버튼 간의 간격 */
+}
+

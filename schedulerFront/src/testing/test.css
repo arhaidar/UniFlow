@@ -1,0 +1,95 @@
+
+body {
+    /* border: 5px solid blueviolet; */
+    margin-top: 0px;
+}
+
+
+/* The specialization button row */
+.upper_div_specialization_list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin: 1rem 0;
+}
+.upper_div_specialization_list button {
+    background-color: #fff;
+    border: 2px solid #333;
+    border-radius: 8px;
+    padding: 0.5rem 0.8rem;
+    cursor: pointer;
+}
+.upper_div_specialization_list button:hover {
+    background-color: #eee;
+}
+
+/* The “Next” button on the last slide, bottom-right. */
+.specialization-next-btn {
+    margin-top: 1.5rem;
+    text-align: right;
+}
+.specialization-next-btn button {
+    background: #0074d9;
+    color: #fff;
+    border: none;
+    padding: 0.6rem 1rem;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 500;
+}
+.specialization-next-btn button:hover {
+    background: #005fa3;
+}
+
+/* Ensure checkbox and text are properly aligned */
+.course-box {
+    margin: 3px 0;  /* Increase vertical margin for spacing */
+    padding: 7px 14px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    cursor: pointer;
+    background: #fff;
+    display: flex; /* Ensure content aligns properly */
+    align-items: center; /* Align checkbox and text */
+    gap: 10px; /* Add spacing between checkbox and text */
+}
+
+
+/* On hover, slightly change background */
+.course-box:hover {
+    background: #f9f9f9;
+}
+
+/* Hide default checkbox */
+.course-checkbox {
+    width: 14px;
+    height: 14px;
+    border: 2px solid black;
+    border-radius: 5px;
+    background: white;
+    cursor: pointer;
+    display: inline-block;
+    position: relative;
+}
+
+/* Custom checkmark */
+.course-checkbox:checked::after {
+    font-size: 18px;
+    color: white;
+    text-align: center;
+    line-height: 24px;
+    display: block;
+    width: 100%;
+    height: 100%;
+    background: #255799;
+}
+
+/* Make sure label works as expected */
+.checkbox-label {
+    cursor: pointer;
+}
+
+.course-textbox {
+    font-size: 12px;
+    user-select: none; /* Prevents text selection */
+}
