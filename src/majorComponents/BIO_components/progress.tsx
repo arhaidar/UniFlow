@@ -125,7 +125,7 @@ export const ComputerScienceBS = ({major}:any) => {
     },
     {
         name: 'I&CSCI H32',
-        id: 'course_H32',
+        id: 'course_H32sdfadsfa',
         description: 'Python Programming and Libraries (Accelerated)',
     },
     {
