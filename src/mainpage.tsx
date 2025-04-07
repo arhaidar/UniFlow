@@ -285,8 +285,8 @@ export const MainPage = ({major}:any) => {
           <nav className="sidebar">
             <h5 className='logo-container'>
               <Link className='home-btn' to="/" >
-                UCI 
-                <span>Planner</span>
+                Degree 
+                {/* <span>FLOW</span> */}
               </Link>
               <div className="zot-underline"></div>
             </h5>

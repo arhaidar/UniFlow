@@ -54,5 +54,6 @@
     height: 100%; /* 고정된 높이 */
     overflow-y: auto; /* 내용이 넘칠 경우 스크롤 가능 */
     padding: 20px; /* 패딩 추가 */
+    background-color: rgb(94, 26, 26);
 }
   
