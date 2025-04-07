@@ -23,7 +23,7 @@ const Home = ({setMajor}:any) => {
             </label> */}
             <input id="major-search" className="i-searchbar" type="text" placeholder='Search for your major'/>
             <div>
-              <div className='i-majors' onClick={() => handleMajorSelect("cs")}><Link className='i-link' to={"/main"}> Computer Science, B.S.</Link></div>
+              <div className='i-majors' onClick={() => handleMajorSelect("cs")}><Link className='i-link' to={"/UniFlow/main"}> Computer Science, B.S.</Link></div>
               <div className='i-majors' onClick={() => handleMajorSelect("ae")}><Link className='i-link' to={"/main"}> Aerospace Engineering, B.S.</Link></div>
               <div className='i-majors' onClick={() => handleMajorSelect("be")}><Link className='i-link' to={"/main"}> Biomedical Engineering, B.S.</Link></div>
               <div className='i-majors' onClick={() => handleMajorSelect("che")}><Link className='i-link' to={"/main"}> Chemical Engineering, B.S.</Link></div>
@@ -45,8 +45,8 @@ function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<Home setMajor={setMajor}/>} />
-        <Route path={"/main/*"} element={<MainPage major={major} />} />
+        <Route path="/UniFlow/" element={<Home setMajor={setMajor}/>} />
+        <Route path={"/UniFlow/main/*"} element={<MainPage major={major} />} />
       </Routes>
     </Router>
   );
