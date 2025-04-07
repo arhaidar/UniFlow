@@ -284,24 +284,24 @@ export const MainPage = ({major}:any) => {
       <div className="dashboard">
           <nav className="sidebar">
             <h5 className='logo-container'>
-              <Link className='home-btn' to="/" >
+              <Link className='home-btn' to="/UniFlow" >
                 UCI 
                 <span>Planner</span>
               </Link>
               <div className="zot-underline"></div>
             </h5>
             <ul className='link-container'>
-              <li><Link to={"/main/dashboard"}>DashBoard</Link></li>
-              <li><Link to={"/main/progress"}>Classes Completed</Link></li>
-              <li><Link to={"/main/preference"}>Class Preference</Link></li>
-              <li><Link to={"/main/nextplanner"}>Next Quarter Planner</Link></li>
+              <li><Link to={"/UniFlow/main/dashboard"}>DashBoard</Link></li>
+              <li><Link to={"/UniFlow/main/progress"}>Classes Completed</Link></li>
+              <li><Link to={"/UniFlow/main/preference"}>Class Preference</Link></li>
+              <li><Link to={"/UniFlow/main/nextplanner"}>Next Quarter Planner</Link></li>
               {/* <li><Link to={"/main/alterfinder"}>Alternative Class Finder</Link></li> */}
-              <li><Link to={"/main/customplanner"}>Custom Planner</Link></li>
-              <li><Link to={"/main/entireplanner"}>Path Finder</Link></li>
-              <li><Link to={"/main/majortree"}>PREREQ TREE</Link></li>
-              <li><Link to={"/main/majorgraph"}>PREREQ Graph</Link></li>
-              <li><Link to={"/main/test"}>PREREQ TREE TEST</Link></li>
-              <li><Link to={"/main/result"}>Results</Link></li>
+              <li><Link to={"/UniFlow/main/customplanner"}>Custom Planner</Link></li>
+              <li><Link to={"/UniFlow/main/entireplanner"}>Path Finder</Link></li>
+              <li><Link to={"/UniFlow/main/majortree"}>PREREQ TREE</Link></li>
+              <li><Link to={"/UniFlow/main/majorgraph"}>PREREQ Graph</Link></li>
+              <li><Link to={"/UniFlow/main/test"}>PREREQ TREE TEST</Link></li>
+              <li><Link to={"/UniFlow/main/result"}>Results</Link></li>
             </ul>
           </nav>
 
