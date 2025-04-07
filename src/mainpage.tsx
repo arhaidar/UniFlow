@@ -309,7 +309,7 @@ export const MainPage = ({major}:any) => {
               <Route path="/nextplanner" element={<NextPlanner />} />
               <Route path="/alterfinder" element={<NextPlanner />} />
               <Route path="/customplanner" element={<CustomPlanner data={userMajor}/>} />
-              <Route path="/entireplanner" element={<PathFinder data={state} />} />
+              <Route path="/entireplanner" element={<PathFinder/>} />
               <Route path="/majortree" element={<TreeVisualizer/>} />
               <Route path="/majorgraph" element={<GraphVisualizer/>} />
               <Route path="/test" element={<PathFinder2/>} />
