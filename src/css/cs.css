@@ -28,6 +28,7 @@
     height: 100%; /* 고정된 높이 */
     background-color:#255799;
     color: white;
+    border-right: 5px solid black;
   }
   
   .sidebar ul {

@@ -291,9 +291,9 @@ export const MainPage = ({major}:any) => {
               <div className="zot-underline"></div>
             </h5>
             <ul className='link-container'>
-              <li><Link to={"/UniFlow/main/dashboard"}>DashBoard</Link></li>
+              {/* <li><Link to={"/UniFlow/main/dashboard"}>DashBoard</Link></li> */}
               <li><Link to={"/UniFlow/main/progress"}>Classes Completed</Link></li>
-              <li><Link to={"/UniFlow/main/preference"}>Class Preference</Link></li>
+              {/* <li><Link to={"/UniFlow/main/preference"}>Class Preference</Link></li> */}
               <li><Link to={"/UniFlow/main/nextplanner"}>Next Quarter Planner</Link></li>
               {/* <li><Link to={"/main/alterfinder"}>Alternative Class Finder</Link></li> */}
               <li><Link to={"/UniFlow/main/customplanner"}>Custom Planner</Link></li>
@@ -307,9 +307,9 @@ export const MainPage = ({major}:any) => {
 
           <div className="main-content">
             <Routes>
-              <Route path="/*" element={<DashBoard/>} />
+              {/* <Route path="/*" element={<DashBoard/>} /> */}
               <Route path="/progress" element={componentPage} />
-              <Route path="/preference" element={<Preference />} />
+              {/* <Route path="/preference" element={<Preference />} /> */}
               <Route path="/nextplanner" element={<NextPlanner />} />
               <Route path="/alterfinder" element={<NextPlanner />} />
               <Route path="/customplanner" element={<CustomPlanner data={userMajor}/>} />
