@@ -8,6 +8,5 @@ import react from '@vitejs/plugin-react'
 
 // this one does not deploy properly via github default pages
 export default defineConfig({
-  base: '/UniFlow/',
   plugins: [react()],
 })

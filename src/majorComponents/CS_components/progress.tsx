@@ -1,6 +1,6 @@
 import React from 'react';
 import { useState } from 'react'; // ✅ Add useState here
-import { useCourseContext } from '../../mainpage';
+import { useCourseContext } from '../mainpage';
 
 export const ComputerScienceBS = ({major}:any) => {
 

@@ -8,7 +8,7 @@ import { CourseState } from "../../mainpage";
 import { useCourseContext } from '../../mainpage'; //sharing data
 
 import { Test } from "../../testing/test";
-import { Preference } from "../../majorComponents/CS_components/preference";
+import { Preference } from "../../majorComponents/preference";
 
 interface Final_ClassWithRank {
   value: string; // The node value (class name)
