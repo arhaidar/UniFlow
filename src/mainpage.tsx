@@ -2,19 +2,23 @@ import React, { useReducer, useState, useEffect, createContext, useContext } fro
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 
 import './css/cs.css'
-import { TreeVisualizer } from './TREE/TreeVisualizer';
-import { GraphVisualizer } from './TREE/GraphVisualizer';
-import { Error404 } from './error/error404'
+
+import { Error404 } from './component/error/error404'
 import { DashBoard } from './component/dashboard/dashboard';
-import { Preference } from './majorComponents/CS_components/preference';
+
 import { NextPlanner } from './component/next_planner/next_planner';
 import { CustomPlanner } from './component/custom_planner/custom_planner';
-import { PathFinder } from './component/entire_planner/entire'
-import { PathFinder2 } from './component/entire_planner/advanced_entire';
 
 import { ComputerScienceBS } from './majorComponents/CS_components/progress';
-import { AerospaceEngineeringBS } from './progressComponent/Aerospaceengineeringbs';
-import { BiomedicalEngineeringBS } from './progressComponent/biomedicalengineeringbs';
+import { Preference } from './majorComponents/CS_components/preference';
+// add other majors components here ...
+
+
+import { PathFinder } from './component/entire_planner/entire'
+import { PathFinder2 } from './component/entire_planner/advanced_entire';
+import { TreeVisualizer } from './TREE/TreeVisualizer';
+import { GraphVisualizer } from './TREE/GraphVisualizer';
+
 
 /* ======================= difference major =========================
 
@@ -246,25 +250,25 @@ export const MainPage = ({major}:any) => {
       setUserMajor(effectiveMajor)
     }
     else if (effectiveMajor === "ae") {
-      setComponentPage(<AerospaceEngineeringBS major={"Aerospace Engineering, B.S."}/>);
+      setComponentPage(<ComputerScienceBS major={"Aerospace Engineering, B.S."}/>);
     } 
     else if (effectiveMajor === "be") {
-      setComponentPage(<BiomedicalEngineeringBS major={"Biomedical Engineering, B.S."}/>);
+      setComponentPage(<ComputerScienceBS major={"Biomedical Engineering, B.S."}/>);
     } 
     else if (effectiveMajor === "che") {
-      setComponentPage(<BiomedicalEngineeringBS major={"Chemical Engineering, B.S."}/>);
+      setComponentPage(<ComputerScienceBS major={"Chemical Engineering, B.S."}/>);
     } 
     else if (effectiveMajor === "cve") {
-      setComponentPage(<BiomedicalEngineeringBS major={"Civil Engineering, B.S."}/>);
+      setComponentPage(<ComputerScienceBS major={"Civil Engineering, B.S."}/>);
     } 
     else if (effectiveMajor === "ce") {
-      setComponentPage(<BiomedicalEngineeringBS major={"Computer Engineering, B.S."}/>);
+      setComponentPage(<ComputerScienceBS major={"Computer Engineering, B.S."}/>);
     } 
     else if (effectiveMajor === "ee") {
-      setComponentPage(<BiomedicalEngineeringBS major={"Electrical Engineering, B.S."}/>);
+      setComponentPage(<ComputerScienceBS major={"Electrical Engineering, B.S."}/>);
     } 
     else if (effectiveMajor === "me") {
-      setComponentPage(<BiomedicalEngineeringBS major={"Mechanical Engineering, B.S."}/>);
+      setComponentPage(<ComputerScienceBS major={"Mechanical Engineering, B.S."}/>);
     } 
     else {
       setComponentPage(<Error404 />);
