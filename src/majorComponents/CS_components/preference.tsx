@@ -1,5 +1,5 @@
 import React, { useEffect, useState} from 'react';
-import { useCourseContext } from '../mainpage';
+import { useCourseContext } from '../../mainpage';
 // import '../css/checkbox.css'
 
 // import Slider from 'react-slick';
