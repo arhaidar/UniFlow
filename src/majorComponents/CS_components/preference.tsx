@@ -41,6 +41,7 @@ export const Preference = () => {
     dispatch({ type: 'ADD_OTHERS', payload: list });
   };
 
+  //updating data
   const completeCourseCount = () => {
     console.log("RUN UPDATE FUNC\n")
     const specializationCompleteList:string|null = state.specialization; //string
