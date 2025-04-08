@@ -40,8 +40,11 @@ interface Course {
   name?: string;
 }
 
-export const CustomPlanner:React.FC<{data: string}> = (userMajor) => {
+export const CustomPlanner:React.FC = () => {
   const { state, dispatch } = useCourseContext();
+  const [userMajor, setUserMajor] = useState<string>('');
+
+  setUserMajor(state.major); // Get the user's major from the context
 
   const combineStateToJSON = (): object => {
     return {
@@ -174,7 +177,7 @@ export const CustomPlanner:React.FC<{data: string}> = (userMajor) => {
   // ===================== RENDER TO UPDATE DATA ====================
   const [major, setMajor] = useState<string>('');
   useEffect(() => {
-    setMajor(userMajor.data);
+    setMajor(userMajor);
     getSearchResult(); //for search data
   },[]);
 

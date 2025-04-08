@@ -6,6 +6,9 @@ import './css/cs.css'
 import { Error404 } from './component/error/error404'
 import { DashBoard } from './component/dashboard/dashboard';
 
+import { Sidebar } from './component/side_bar/sidebar';
+import { getMajorComponents } from './utils/helper_common/get_major_compo';
+
 import { NextPlanner } from './component/next_planner/next_planner';
 import { CustomPlanner } from './component/custom_planner/custom_planner';
 
@@ -19,12 +22,6 @@ import { PathFinder2 } from './component/entire_planner/advanced_entire';
 import { TreeVisualizer } from './TREE/TreeVisualizer';
 import { GraphVisualizer } from './TREE/GraphVisualizer';
 
-
-
-// NOTE: THIS IS FOR ThE NEW SLIDING SIDEBAR
-import { FaBars } from "react-icons/fa";
-import { MdHome } from "react-icons/md"; // Example icon for the "UCI" logo
-// Or import an actual image if you have one
 
 
 /* ======================= difference major =========================
@@ -55,6 +52,7 @@ import { MdHome } from "react-icons/md"; // Example icon for the "UCI" logo
  ======================= difference major ========================= */
 
 export type CourseState = {
+  major: string;
   taken: Set<string>;
   need_take: Set<string>;
   project: Set<string>;
@@ -71,6 +69,7 @@ export type CourseState = {
 };
 
 export type CourseAction =
+  | { type: 'SET_MAJOR'; payload: string }
   | { type: 'ADD_TAKEN'; payload: string }
   | { type: 'REMOVE_TAKEN'; payload: string }
   | { type: 'ADD_NEED_TAKE'; payload: string } 
@@ -95,6 +94,7 @@ export type CourseAction =
   | { type: 'ADD_TREE'; payload: any }
   
 const initialState: CourseState = {
+  major: "student major",
   taken: new Set<string>(),
   need_take: new Set<string>(),
   project: new Set<string>(),
@@ -112,6 +112,11 @@ const initialState: CourseState = {
 
 function courseReducer(state: CourseState, action: CourseAction, ): CourseState {
   switch (action.type) {
+    case 'SET_MAJOR':
+      return {
+        ...state,
+        major: action.payload
+      };
     case 'ADD_TAKEN':
       return {
         ...state,
@@ -241,215 +246,14 @@ export const useCourseContext = () => {
   return context;
 };
 
-
-// Expanding seidebar
-export const Sidebar = () => {
-  const [isOpen, setIsOpen] = useState(true); // entire sidebar open vs. collapsed
-  const [isQuarterOpen, setIsQuarterOpen] = useState(false); // Quarter Planner dropdown
-  const [isPathOpen, setIsPathOpen] = useState(false);       // Path Finder dropdown
-
-  // entire sidebar
-  const toggleSidebar = () => {
-    setIsOpen((prev) => !prev);
-    setIsQuarterOpen(false);
-    setIsPathOpen(false);
-  };
-
-  // Toggle dropdown submenus
-  const toggleQuarterDropdown = () => setIsQuarterOpen((prev) => !prev);
-  const togglePathDropdown = () => setIsPathOpen((prev) => !prev);
-
-  return (
-    <nav className={`sidebar ${isOpen ? "open" : "collapsed"}`}>
-      <div className="sidebar-header">
-        <button className="burger-btn" onClick={toggleSidebar}>
-          <FaBars />
-        </button>
-        {isOpen && (
-          <h2 className="uci-title">
-            DEGREE<span>FLOW</span>
-          </h2>
-        )}
-      </div>
-      <ul className="nav-list">
-        <li>
-          <Link to="/UniFlow/main/progress">
-            {isOpen ? "Major Requirement" : <span className="icon-only">MR</span>}
-          </Link>
-        </li>
-        <li>
-          <Link to="/UniFlow/main/progress">
-            {isOpen ? "Major Progress" : <span className="icon-only">MP</span>}
-          </Link>
-        </li>
-
-        <li className="dropdown">
-          <div className="dropdown-parent" onClick={toggleQuarterDropdown}>
-            {isOpen ? (
-              <>
-                Quarter Planner{" "}
-                <span className="arrow">{isQuarterOpen ? "▲" : "▼"}</span>
-              </>
-            ) : (
-              <span className="icon-only">QP</span>
-            )}
-          </div>
-          {isQuarterOpen && isOpen && (
-            <ul className="dropdown-list">
-              <li>
-                <Link to="/UniFlow/main/customplanner">Custom</Link>
-              </li>
-              <li>
-                <Link to="/UniFlow/main/nextplanner">Auto</Link>
-              </li>
-            </ul>
-          )}
-        </li>
-
-        {/* Path Finder with dropdown */}
-        <li className="dropdown">
-          <div className="dropdown-parent" onClick={togglePathDropdown}>
-            {isOpen ? (
-              <>
-                Path Finder{" "}
-                <span className="arrow">{isPathOpen ? "▲" : "▼"}</span>
-              </>
-            ) : (
-              <span className="icon-only">PF</span>
-            )}
-          </div>
-          {isPathOpen && isOpen && (
-            <ul className="dropdown-list">
-              <li>
-                <Link to="/UniFlow/main/entireplanner">Auto Mode</Link>
-              </li>
-              <li>
-                <Link to="/UniFlow/main/test">Manual Mode</Link>
-              </li>
-            </ul>
-          )}
-        </li>
-
-        <li>
-          <Link to="/UniFlow/main/majortree">
-            {isOpen ? "PREREQ TREE" : <span className="icon-only">PT</span>}
-          </Link>
-        </li>
-        <li>
-          <Link to="/UniFlow/main/majorgraph">
-            {isOpen ? "PREREQ Graph" : <span className="icon-only">PG</span>}
-          </Link>
-        </li>
-        <li>
-          <Link to="/UniFlow/main/test">
-            {isOpen ? "PREREQ TREE TEST" : <span className="icon-only">PTT</span>}
-          </Link>
-        </li>
-        <li>
-          <Link to="/UniFlow/main/result">
-            {isOpen ? "Results" : <span className="icon-only">RS</span>}
-          </Link>
-        </li>
-      </ul>
-    </nav>
-  );
-}
-
 export const MainPage = ({major}:any) => {
   const [state, dispatch] = useReducer(courseReducer, initialState, () => initialState); //init only for less memeory usage
-  const [componentPage, setComponentPage] = useState<React.ReactElement | null>(null); // dynamically change the component page
-  const [userMajor, setUserMajor] = useState('')
-
-  // <-- Add this "isOpen" piece of state for the sidebar
-  const [isOpen, setIsOpen] = useState(true);
+  const [componentPage, setComponentPage] = useState<React.ReactElement | null>(null); // Dynamically change the component page
 
   useEffect(() => {
-    // Determine the effective major: use prop if provided, otherwise check localStorage
-    let effectiveMajor:string = major;
-    if (!effectiveMajor) {
-      const storedMajor = localStorage.getItem('major');
-      effectiveMajor = storedMajor || ''; // Default to empty string if nothing is stored
-    }
-
-    if (effectiveMajor === 'cs') {
-      setComponentPage(<ComputerScienceBS major={"Computer Science, B.S."} />);
-      setUserMajor(effectiveMajor)
-    }
-    else if (effectiveMajor === "ae") {
-      setComponentPage(<ComputerScienceBS major={"Aerospace Engineering, B.S."}/>);
-    } 
-    else if (effectiveMajor === "be") {
-      setComponentPage(<ComputerScienceBS major={"Biomedical Engineering, B.S."}/>);
-    } 
-    else if (effectiveMajor === "che") {
-      setComponentPage(<ComputerScienceBS major={"Chemical Engineering, B.S."}/>);
-    } 
-    else if (effectiveMajor === "cve") {
-      setComponentPage(<ComputerScienceBS major={"Civil Engineering, B.S."}/>);
-    } 
-    else if (effectiveMajor === "ce") {
-      setComponentPage(<ComputerScienceBS major={"Computer Engineering, B.S."}/>);
-    } 
-    else if (effectiveMajor === "ee") {
-      setComponentPage(<ComputerScienceBS major={"Electrical Engineering, B.S."}/>);
-    } 
-    else if (effectiveMajor === "me") {
-      setComponentPage(<ComputerScienceBS major={"Mechanical Engineering, B.S."}/>);
-    } 
-    else {
-      setComponentPage(<Error404 />);
-    }
-
-    if (effectiveMajor) {
-      localStorage.setItem('major', effectiveMajor);
-    }
-  }, [major]); // frequent rendering
-
-  // return (
-  //   <CourseContext.Provider value={{ state, dispatch }}>
-  //     <div className="dashboard">
-  //         <nav className="sidebar">
-  //           <h5 className='logo-container'>
-  //             <Link className='home-btn' to="/UniFlow" >
-  //               UCI 
-  //               <span>Planner</span>
-  //             </Link>
-  //             <div className="zot-underline"></div>
-  //           </h5>
-  //           <ul className='link-container'>
-  //             {/* <li><Link to={"/UniFlow/main/dashboard"}>DashBoard</Link></li> */}
-  //             <li><Link to={"/UniFlow/main/progress"}>Classes Completed</Link></li>
-  //             {/* <li><Link to={"/UniFlow/main/preference"}>Class Preference</Link></li> */}
-  //             <li><Link to={"/UniFlow/main/nextplanner"}>Next Quarter Planner</Link></li>
-  //             {/* <li><Link to={"/main/alterfinder"}>Alternative Class Finder</Link></li> */}
-  //             <li><Link to={"/UniFlow/main/customplanner"}>Custom Planner</Link></li>
-  //             <li><Link to={"/UniFlow/main/entireplanner"}>Path Finder</Link></li>
-  //             <li><Link to={"/UniFlow/main/majortree"}>PREREQ TREE</Link></li>
-  //             <li><Link to={"/UniFlow/main/majorgraph"}>PREREQ Graph</Link></li>
-  //             <li><Link to={"/UniFlow/main/test"}>PREREQ TREE TEST</Link></li>
-  //             <li><Link to={"/UniFlow/main/result"}>Results</Link></li>
-  //           </ul>
-  //         </nav>
-
-  //         <div className="main-content">
-  //           <Routes>
-  //             {/* <Route path="/*" element={<DashBoard/>} /> */}
-  //             <Route path="/progress" element={componentPage} />
-  //             {/* <Route path="/preference" element={<Preference />} /> */}
-  //             <Route path="/nextplanner" element={<NextPlanner />} />
-  //             <Route path="/alterfinder" element={<NextPlanner />} />
-  //             <Route path="/customplanner" element={<CustomPlanner data={userMajor}/>} />
-  //             <Route path="/entireplanner" element={<PathFinder/>} />
-  //             <Route path="/majortree" element={<TreeVisualizer/>} />
-  //             <Route path="/majorgraph" element={<GraphVisualizer/>} />
-  //             <Route path="/test" element={<PathFinder2/>} />
-  //             <Route path="*" element={<DashBoard/>} />    
-  //           </Routes>
-  //         </div> 
-  //       </div>
-  //   </CourseContext.Provider>
-  // );
-
+    setComponentPage(getMajorComponents(major, dispatch)); //error already handled in function.
+  }, [major]);
+  
   return (
     <CourseContext.Provider value={{ state, dispatch }}>
       <div className="dashboard">
@@ -459,7 +263,7 @@ export const MainPage = ({major}:any) => {
           <Routes>
             <Route path="/progress" element={componentPage} />
             <Route path="/nextplanner" element={<NextPlanner />} />
-            <Route path="/customplanner" element={<CustomPlanner data={userMajor} />} />
+            <Route path="/customplanner" element={<CustomPlanner />} />
             <Route path="/entireplanner" element={<PathFinder />} />
             <Route path="/majortree" element={<TreeVisualizer />} />
             <Route path="/majorgraph" element={<GraphVisualizer />} />
