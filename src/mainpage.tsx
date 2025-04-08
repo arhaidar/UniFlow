@@ -66,6 +66,7 @@ export type CourseState = {
   num_total: number;
   num_project: number;
   tree_data:any;
+  update_flag:number;
 };
 
 export type CourseAction =
@@ -92,6 +93,7 @@ export type CourseAction =
   | { type: 'REMOVE_SPECIALIZATION'; payload: string }
   | { type: 'TOGGLE_SPECIALIZATION'; payload: string }
   | { type: 'ADD_TREE'; payload: any }
+  | { type: 'UPDATE_NEEDED'; payload: number}
   
 const initialState: CourseState = {
   major: "student major",
@@ -108,6 +110,7 @@ const initialState: CourseState = {
   num_total: 0, 
   num_project: 0, 
   tree_data: null,
+  update_flag: 0, //init: upload not needed
 };
 
 function courseReducer(state: CourseState, action: CourseAction, ): CourseState {
@@ -224,6 +227,11 @@ function courseReducer(state: CourseState, action: CourseAction, ): CourseState 
         ...state,
         tree_data:action.payload,
       };
+    case 'UPDATE_NEEDED':
+      return {
+        ...state,
+        update_flag:action.payload, //update 
+      }
     default:
       return state;
   }
