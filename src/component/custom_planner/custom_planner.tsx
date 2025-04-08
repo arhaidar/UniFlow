@@ -45,7 +45,7 @@ export const CustomPlanner:React.FC = () => {
   const [userMajor, setUserMajor] = useState<string>('');
 
   setUserMajor(state.major); // Get the user's major from the context
-
+  
   const combineStateToJSON = (): object => {
     return {
       major: 'cs',

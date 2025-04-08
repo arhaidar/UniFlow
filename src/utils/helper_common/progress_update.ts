@@ -129,15 +129,20 @@ export function progress_upadate(): void {
     //check if user did change anything from 'progress page' by checking 'state.change' (boolean)
     //if not, just return (no action needed)
 
-    if (state.change === false) {
-        return;
+    if (state.update_flag === 0) {
+      return;
+    }
+    else if(state.update_flag !== 1) {
+      return;
     }
 
-    //if user did change anything from 'progress page', update the progress data by calling the function
-    
+    // if user did change anything from 'progress page', update the progress data by calling the function
+    // go over state.need_complete (set<string)
+    // check if that is in 'state.taken' (string[]) -> thinking to change into Set<string> if it is better for permformance
+    // if data in state.taken, skip, others (not in) add into
 
     //user not taken anything
-    //add untaken list into
+    // here these lists
     state.need_complete
     state.need_elective
     state.need_others
@@ -148,6 +153,8 @@ export function progress_upadate(): void {
 
     // it does not really need to check size just simply add everything
     // because all those list are 'SET' so it should be handy to use 
-      
+
+    //reset to 0
+    dispatch({type: 'UPDATE_NEEDED', payload: 0})
 }
   
