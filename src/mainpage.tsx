@@ -250,15 +250,40 @@ export const MainPage = ({major}:any) => {
   const [state, dispatch] = useReducer(courseReducer, initialState, () => initialState); //init only for less memeory usage
   const [componentPage, setComponentPage] = useState<React.ReactElement | null>(null); // Dynamically change the component page
 
+  // 1) Define a local state for dark mode
+  const [darkMode, setDarkMode] = useState(false);
+
   useEffect(() => {
     setComponentPage(getMajorComponents(major, dispatch)); //error already handled in function.
   }, [major]);
   
+  // return (
+  //   <CourseContext.Provider value={{ state, dispatch }}>
+  //     <div className="dashboard">
+  //       <Sidebar />
+  //       {/* MAIN CONTENT */}
+  //       <div className="main-content">
+  //         <Routes>
+  //           <Route path="/progress" element={componentPage} />
+  //           <Route path="/nextplanner" element={<NextPlanner />} />
+  //           <Route path="/customplanner" element={<CustomPlanner />} />
+  //           <Route path="/entireplanner" element={<PathFinder />} />
+  //           <Route path="/majortree" element={<TreeVisualizer />} />
+  //           <Route path="/majorgraph" element={<GraphVisualizer />} />
+  //           <Route path="/test" element={<PathFinder2 />} />
+  //           <Route path="*" element={<DashBoard />} />
+  //         </Routes>
+  //       </div>
+  //     </div>
+  //   </CourseContext.Provider>
+  // );
   return (
     <CourseContext.Provider value={{ state, dispatch }}>
-      <div className="dashboard">
-        <Sidebar />
-        {/* MAIN CONTENT */}
+      {/* 2) Add "dark" class if darkMode is true */}
+      <div className={`dashboard ${darkMode ? "dark" : ""}`}>
+        {/* 3) Pass darkMode & setDarkMode to Sidebar */}
+        <Sidebar darkMode={darkMode} setDarkMode={setDarkMode} />
+
         <div className="main-content">
           <Routes>
             <Route path="/progress" element={componentPage} />

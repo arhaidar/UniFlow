@@ -5,6 +5,18 @@
   height: 100vh;
 }
 
+/* When dark mode is active, .dashboard has the .dark class. */
+.dashboard.dark {
+  background-color: #000000; /* Example dark background */
+  color: #eee;              /* Example light text */
+}
+
+/* Make the main content area dark as well */
+.dashboard.dark .main-content {
+  background-color: #000000;
+  color: #eee;
+}
+
 .main-content {
   flex: 1;
   overflow-y: auto;
@@ -12,6 +24,7 @@
   padding: 20px;
 }
 
+/* Sidebar styling */
 .sidebar {
   background-color: #ffffff;
   border-right: 1px solid black;
@@ -20,14 +33,21 @@
   flex-direction: column;
 }
 
+/* Dark mode for sidebar */
+.dashboard.dark .sidebar {
+  background-color: #000000;
+  border-right: 1px solid #555;
+}
+
+/* Expand/collapse logic */
 .sidebar.open {
-  width: 200px; /* expanded width */
+  width: 200px;
 }
-
 .sidebar.collapsed {
-  width: 60px;  /* collapsed width */
+  width: 60px;
 }
 
+/* The burger + header area */
 .sidebar-header {
   display: flex;
   align-items: center;
@@ -35,7 +55,6 @@
   padding: 0.5rem;
 }
 
-/* The burger icon button */
 .burger-btn {
   background: none;
   border: none;
@@ -47,7 +66,7 @@
 .uci-title {
   font-size: 2rem;
   font-weight: 600;
-  color: #fecc07; 
+  color: #fecc07;
   margin: 0;
   line-height: 1;
 }
@@ -58,15 +77,8 @@
   color: #666;
 }
 
-.uci-icon {
-  display: flex;
-  align-items: center;
-  font-size: 1.5rem;
-  color: #fecc07;
-}
-
 .nav-list {
-  list-style: none;  
+  list-style: none;
   margin: 0;
   padding: 0;
 }
@@ -82,15 +94,23 @@
   color: #333;
   padding: 0.75rem 1rem;
 }
-
 .nav-list a:hover {
   background-color: #f2f2f2;
+}
+
+/* In dark mode, adjust link colors + hover */
+.dashboard.dark .nav-list a {
+  color: #eee;
+}
+.dashboard.dark .nav-list a:hover {
+  background-color: #505050;
 }
 
 .icon-only {
   font-size: 0.85rem;
 }
 
+/* Dropdown parents + arrow */
 .dropdown-parent {
   cursor: pointer;
   padding: 0.75rem 1rem;
@@ -98,20 +118,133 @@
   justify-content: space-between;
   align-items: center;
 }
-
 .arrow {
   margin-left: 5px;
 }
 
-/* The sub-list for dropdown */
+/* Sub-list with black left border */
 .dropdown-list {
   list-style: none;
   margin: 0;
-  padding: 0 0 0 1.5rem; /* indent */
+  padding: 0 0 0 1.5rem;
   background-color: #fafafa;
   border-left: 2px solid black;
 }
-
 .dropdown-list li a {
   padding: 0.5rem 1rem;
+}
+
+/* In dark mode, invert the sub-list background + border */
+.dashboard.dark .dropdown-list {
+  background-color: #4a4a4a;
+  border-left: 2px solid #999;
+}
+
+/* Footer area for the dark mode button */
+.sidebar-footer {
+  margin-top: auto; /* pushes to bottom */
+  padding: 0.75rem 1rem;
+  text-align: center;
+  background-color: #f7f7f7;
+  border-top: 1px solid #ddd;
+}
+
+.dashboard.dark .sidebar-footer {
+  background-color: #444;
+  border-top: 1px solid #666;
+}
+
+/* 
+   ========== Fancy Dark Mode Slider ==========
+   We'll place a hidden checkbox + label for the slider. 
+   The icons are from react-icons (FaMoon, FaSun). 
+*/
+
+:root {
+  /* Define variables in px */
+  --track-width: 80px;
+  --ball-width: 30px;
+  --edge-padding: 5px; /* left + right clearance */
+}
+
+/* Wrap the toggle in a container for alignment */
+.toggle-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+
+/* Hide the actual checkbox */
+.checkbox {
+  opacity: 0;
+  position: absolute;
+  cursor: pointer;
+}
+
+/* The label acts as the slider track */
+.checkbox-label {
+  background-color: #111;
+  width: var(--track-width);
+  height: 30px;
+  border-radius: 50px;
+  position: relative;
+  padding: 5px;
+  cursor: pointer;
+  
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* The moon/sun icons (FaMoon, FaSun) within the label
+   We'll shrink them or adjust color as you like. */
+.checkbox-label svg {
+  width: 16px;
+  height: 16px;
+  padding: 2px;
+  /* Example colors: */
+  fill: #f39c12; /* or #f1c40f, etc. */
+}
+
+/* The ball inside the track */
+.checkbox-label .ball {
+  background-color: #fff;
+  width: var(--ball-width);    /* 26px */
+  height: var(--ball-width);
+  position: absolute;
+  left: var(--edge-padding);
+  top: var(--edge-padding);
+  border-radius: 50%;
+  transition: transform 0.2s linear;
+}
+
+/* Move the ball to the right when checked */
+.checkbox:checked + .checkbox-label .ball {
+  transform: translateX(calc(
+      var(--track-width) 
+      - var(--ball-width) 
+  ));
+}
+
+/* 
+   For full control of icon colors, 
+   you can also do .checkbox-label svg:first-child { color: ... } 
+   or use separate classes for sun vs. moon.
+*/
+
+/* 
+   Additionally, in dark mode, 
+   you might invert track color or icon colors if desired:
+*/
+.dashboard.dark .checkbox-label {
+  background-color: #333;
+}
+
+.dashboard,
+.main-content,
+.sidebar,
+.nav-list a,
+.sidebar-footer {
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
