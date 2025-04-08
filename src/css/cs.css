@@ -1,60 +1,126 @@
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600&display=swap');
 
+/* -------------- Layout Containers ------------- */
 .dashboard {
-    display:flex;
-    height: 100vh;
-  }
-.logo-container {
-  margin:0;
-  padding-top: 10px;
-  user-select: none;
+  display: flex;
+  height: 100vh;
 }
-  .home-btn {
-    font-family: 'Montserrat', sans-serif; /* Montserrat 글꼴 적용 */
-    font-size: 40px;
-    text-decoration: none; /* 링크 밑줄 제거 */
-    color: #fecc07; /* 글꼴 색상 설정 */
-    font-style: normal; /* 기본 스타일 설정 (이탤릭이 아닐 경우) */
-    font-weight: 600; /* 글자 두께 설정 */
-    padding-left: 10px;
-  } 
-  .logo-container span{
-    font-size: 20px;
-    color: white;
-  }
 
-  .sidebar {
-    width: 180px;
-    height: 100%; /* 고정된 높이 */
-    background-color:#255799;
-    color: white;
-    border-right: 5px solid black;
-  }
-  
-  .sidebar ul {
-    list-style: none;
-    padding: 0;
-  }
-  
-  .sidebar li {
-    margin-bottom: 10px;
-  }
-  .link-container a {
-    color: white;
-    text-decoration: none;
-    display: block;
-    padding: 10px;
-  }
-  .link-container a:hover {
-    background-color: #c6beb5;
-  }
-
-  
-  .main-content {
-    width: calc(100% - 250px); /* 사이드바 너비를 뺀 나머지 공간 */
-    height: 100%; /* 고정된 높이 */
-    overflow-y: auto; /* 내용이 넘칠 경우 스크롤 가능 */
-    padding: 20px; /* 패딩 추가 */
-    background-color: rgb(94, 26, 26);
+/* The main-content will expand to fill the rest */
+.main-content {
+  flex: 1;
+  overflow-y: auto;
+  background: #fdfdfd;
+  padding: 20px;
 }
-  
+
+/* -------------- Sidebar ------------- */
+.sidebar {
+  background-color: #ffffff;
+  border-right: 1px solid black;
+  transition: width 0.3s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar.open {
+  width: 200px; /* expanded width */
+}
+
+.sidebar.collapsed {
+  width: 60px;  /* collapsed width */
+}
+
+/* -------------- Header (burger + UCI) ------------- */
+.sidebar-header {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 0.5rem;
+}
+
+/* The burger icon button */
+.burger-btn {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  margin-right: 10px;
+}
+
+.uci-title {
+  font-size: 2rem;
+  font-weight: 600;
+  color: #fecc07; /* the golden color you have */
+  margin: 0;
+  line-height: 1;
+}
+
+.uci-title span {
+  display: block;
+  font-size: 1rem;
+  color: #666;
+}
+
+/* The small icon in collapsed mode (instead of "UCI Planner") */
+.uci-icon {
+  display: flex;
+  align-items: center;
+  font-size: 1.5rem;
+  color: #fecc07;
+}
+
+/* -------------- Nav List ------------- */
+.nav-list {
+  list-style: none;   /* remove bullet points */
+  margin: 0;
+  padding: 0;
+}
+
+.nav-list li {
+  margin: 0;
+  padding: 0;
+}
+
+/* The links themselves */
+.nav-list a {
+  display: block;
+  text-decoration: none;
+  color: #333;
+  padding: 0.75rem 1rem;
+}
+
+.nav-list a:hover {
+  background-color: #f2f2f2;
+}
+
+/* If you want "icon-only" text to be smaller or hidden, you can style it */
+.icon-only {
+  font-size: 0.85rem;
+}
+
+/* -------------- Dropdown ------------- */
+.dropdown-parent {
+  cursor: pointer;
+  padding: 0.75rem 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.arrow {
+  margin-left: 5px;
+}
+
+/* The sub-list for dropdown */
+.dropdown-list {
+  list-style: none;
+  margin: 0;
+  padding: 0 0 0 1.5rem; /* slight indent */
+  background-color: #fafafa;
+  border-left: 2px solid black;
+}
+
+.dropdown-list li a {
+  padding: 0.5rem 1rem;
+}
