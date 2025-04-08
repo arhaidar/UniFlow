@@ -1,12 +1,10 @@
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600&display=swap');
 
-/* -------------- Layout Containers ------------- */
 .dashboard {
   display: flex;
   height: 100vh;
 }
 
-/* The main-content will expand to fill the rest */
 .main-content {
   flex: 1;
   overflow-y: auto;
@@ -14,7 +12,6 @@
   padding: 20px;
 }
 
-/* -------------- Sidebar ------------- */
 .sidebar {
   background-color: #ffffff;
   border-right: 1px solid black;
@@ -31,7 +28,6 @@
   width: 60px;  /* collapsed width */
 }
 
-/* -------------- Header (burger + UCI) ------------- */
 .sidebar-header {
   display: flex;
   align-items: center;
@@ -51,7 +47,7 @@
 .uci-title {
   font-size: 2rem;
   font-weight: 600;
-  color: #fecc07; /* the golden color you have */
+  color: #fecc07; 
   margin: 0;
   line-height: 1;
 }
@@ -62,7 +58,6 @@
   color: #666;
 }
 
-/* The small icon in collapsed mode (instead of "UCI Planner") */
 .uci-icon {
   display: flex;
   align-items: center;
@@ -70,9 +65,8 @@
   color: #fecc07;
 }
 
-/* -------------- Nav List ------------- */
 .nav-list {
-  list-style: none;   /* remove bullet points */
+  list-style: none;  
   margin: 0;
   padding: 0;
 }
@@ -82,7 +76,6 @@
   padding: 0;
 }
 
-/* The links themselves */
 .nav-list a {
   display: block;
   text-decoration: none;
@@ -94,12 +87,10 @@
   background-color: #f2f2f2;
 }
 
-/* If you want "icon-only" text to be smaller or hidden, you can style it */
 .icon-only {
   font-size: 0.85rem;
 }
 
-/* -------------- Dropdown ------------- */
 .dropdown-parent {
   cursor: pointer;
   padding: 0.75rem 1rem;
@@ -116,7 +107,7 @@
 .dropdown-list {
   list-style: none;
   margin: 0;
-  padding: 0 0 0 1.5rem; /* slight indent */
+  padding: 0 0 0 1.5rem; /* indent */
   background-color: #fafafa;
   border-left: 2px solid black;
 }

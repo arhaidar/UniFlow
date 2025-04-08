@@ -248,10 +248,9 @@ export const Sidebar = () => {
   const [isQuarterOpen, setIsQuarterOpen] = useState(false); // Quarter Planner dropdown
   const [isPathOpen, setIsPathOpen] = useState(false);       // Path Finder dropdown
 
-  // Toggle entire sidebar
+  // entire sidebar
   const toggleSidebar = () => {
     setIsOpen((prev) => !prev);
-    // When we collapse, also collapse dropdowns if you want:
     setIsQuarterOpen(false);
     setIsPathOpen(false);
   };
@@ -262,7 +261,6 @@ export const Sidebar = () => {
 
   return (
     <nav className={`sidebar ${isOpen ? "open" : "collapsed"}`}>
-      {/* Top area with burger + "UCI" or logo */}
       <div className="sidebar-header">
         <button className="burger-btn" onClick={toggleSidebar}>
           <FaBars />
@@ -285,7 +283,6 @@ export const Sidebar = () => {
           </Link>
         </li>
 
-        {/* Quarter Planner with dropdown */}
         <li className="dropdown">
           <div className="dropdown-parent" onClick={toggleQuarterDropdown}>
             {isOpen ? (
@@ -333,7 +330,6 @@ export const Sidebar = () => {
           )}
         </li>
 
-        {/* Additional Items */}
         <li>
           <Link to="/UniFlow/main/majortree">
             {isOpen ? "PREREQ TREE" : <span className="icon-only">PT</span>}
