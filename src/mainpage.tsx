@@ -261,9 +261,9 @@ export const MainPage = ({major}:any) => {
   // 1) Define a local state for dark mode
   const [darkMode, setDarkMode] = useState(false);
 
-  useEffect(() => {
-    setComponentPage(getMajorComponents(major, dispatch)); //error already handled in function.
-  }, [major]);
+  // useEffect(() => {
+  //   setComponentPage(getMajorComponents(major, dispatch)); //error already handled in function.
+  // }, [major]);
   
   // return (
   //   <CourseContext.Provider value={{ state, dispatch }}>

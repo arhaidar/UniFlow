@@ -44,7 +44,8 @@ export const CustomPlanner:React.FC = () => {
   const { state, dispatch } = useCourseContext();
   const [userMajor, setUserMajor] = useState<string>('');
 
-  setUserMajor(state.major); // Get the user's major from the context
+
+  // setUserMajor(state.major); // Get the user's major from the context
   
   const combineStateToJSON = (): object => {
     return {
@@ -230,7 +231,7 @@ export const CustomPlanner:React.FC = () => {
 
         {/* SEARCH BAR */}
         <div 
-          className={`search_bar ${filteredClasses.length > 0 ? 'has-suggestions' : ''}`}
+         className={`search_bar ${filteredClasses.length > 0 ? 'has-suggestions' : ''}`}
         >
           <input
             type="text"

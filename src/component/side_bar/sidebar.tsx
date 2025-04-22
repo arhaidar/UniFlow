@@ -243,7 +243,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ darkMode, setDarkMode }) => {
           )}
         </li>
 
-        <li>
+        {/* <li>
           <Link to="/UniFlow/main/majortree">
             {isOpen ? "PREREQ TREE" : <span className="icon-only">PT</span>}
           </Link>
@@ -262,7 +262,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ darkMode, setDarkMode }) => {
           <Link to="/UniFlow/main/result">
             {isOpen ? "Results" : <span className="icon-only">RS</span>}
           </Link>
-        </li>
+        </li> */}
       </ul>
 
       <div className="sidebar-footer">
