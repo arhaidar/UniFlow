@@ -1,12 +1,11 @@
 // import React from 'react';
-import { useState } from 'react'; // ✅ Add useState here
+import { useEffect, useState } from 'react'; // ✅ Add useState here
 import { useCourseContext } from '../../mainpage';
 import './dashboard.css'
 // import '../css/checkbox.css'
 
 export const DashBoard = () => {
   const { state, dispatch } = useCourseContext();
-  
   return (
     <div className="cs1_container">
       <header className="zot-header">

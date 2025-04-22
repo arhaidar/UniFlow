@@ -1,10 +1,214 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useState } from 'react'; // ✅ Add useState here
 import { useCourseContext } from '../../mainpage';
 
-export const BioscienceBS = ({major}:any) => {
+import { savingMajorData } from '../../utils/helper_common/save_all_majorClass'
 
-    const { state, dispatch } = useCourseContext();
+// { name: string; id: string; description: string; }[] = 
+// all major data will be differenet
+// but one same format will be like this
+// inside the object file, it has different datalist of type: { name: string; id: string; description: string; }
+// but we just need to add 'name' part
+
+
+// type Course = {
+//   name: string;
+//   id: string;
+//   description: string;
+// };
+
+const major_data = {
+  list0:[
+
+  ],
+  list1:[ 
+    {
+        name: 'BIO SCI D103',
+        id: 'course_d103',
+        description: 'Cell Biology',
+    },
+    {
+        name: 'BIO SCI D104',
+        id: 'course_d104',
+        description: 'Developmental Biology',
+    },
+    {
+        name: 'BIO SCI D105',
+        id: 'course_d105',
+        description: 'Cell, Developmental, and Molecular Biology of Plants',
+    },
+    {
+        name: 'BIO SCI E106',
+        id: 'course_e106',
+        description: 'Processes in Ecology and Evolution',
+    },
+    {
+        name: 'BIO SCI E109',
+        id: 'course_e109',
+        description: 'Human Physiology',
+    },
+    {
+        name: 'BIO SCI N110',
+        id: 'course_n110',
+        description: 'Neurobiology and Behavior',
+    },
+  ],
+  list2:[
+    {
+        name: 'BIO SCI D111L',
+        id: 'course_d111l',
+        description: 'Developmental and Cell Biology Laboratory',
+    },
+    {
+        name: 'BIO SCI E106L',
+        id: 'course_e106l',
+        description: 'Habitats and Organisms',
+    },
+    {
+        name: 'BIO SCI E112L',
+        id: 'course_e112l',
+        description: 'Physiology Laboratory',
+    },
+    {
+        name: 'BIO SCI E115L',
+        id: 'course_e115l',
+        description: 'Evolution Laboratory',
+    },
+    {
+        name: 'BIO SCI E131L',
+        id: 'course_e131l',
+        description: 'Image Analysis in Biological Research',
+    },
+    {
+        name: 'BIO SCI E140L',
+        id: 'course_e140l',
+        description: 'Evolution and the Environment Laboratory',
+    },
+    {
+        name: 'BIO SCI E160L',
+        id: 'course_e160l',
+        description: 'Biology of Birds Lab',
+    },
+    {
+        name: 'BIO SCI E166L',
+        id: 'course_e166l',
+        description: 'Field Biology',
+    },
+    {
+        name: 'BIO SCI E179L',
+        id: 'course_e179l',
+        description: 'Field Freshwater Ecology',
+    },
+    {
+        name: 'BIO SCI E186L',
+        id: 'course_e186l',
+        description: 'Population and Community Ecology Lab',
+    },
+    {
+        name: 'BIO SCI M114L',
+        id: 'course_m114l',
+        description: 'Biochemistry Laboratory',
+    },
+    {
+        name: 'BIO SCI M116L',
+        id: 'course_m116l',
+        description: 'Molecular Biology Laboratory',
+    },
+    {
+        name: 'BIO SCI M118L',
+        id: 'course_m118l',
+        description: 'Experimental Microbiology Laboratory',
+    },
+    {
+        name: 'BIO SCI M121L',
+        id: 'course_m121l',
+        description: 'Advanced Immunology Laboratory',
+    },
+    {
+        name: 'BIO SCI N113L',
+        id: 'course_n113l',
+        description: 'Neurobiology Laboratory',
+    },
+    {
+        name: 'BIO SCI N123L',
+        id: 'course_n123l',
+        description: 'Human Neuroimaging Lab',
+    },
+  ],
+  list3:[
+    {
+        name: 'CHEM 132A',
+        id: 'course_chem132a',
+        description: 'Chemical Thermodynamics, Kinetics, and Dynamics',
+    },
+    {
+        name: 'CHEM 132B',
+        id: 'course_chem132b',
+        description: 'Quantum Principles, Spectroscopy, and Bonding',
+    },
+    {
+        name: 'CHEM 132C',
+        id: 'course_chem132c',
+        description: 'Molecular Structure and Elementary Statistical Mechanics',
+    },
+    {
+        name: 'PHRMSCI 170A',
+        id: 'course_phrmsci170a',
+        description: 'Molecular Pharmacology I',
+    },
+    {
+        name: 'PHRMSCI 170B',
+        id: 'course_phrmsci170b',
+        description: 'Molecular Pharmacology II',
+    },
+    {
+        name: 'PHRMSCI 171',
+        id: 'course_phrmsci171',
+        description: 'Physical Biochemistry',
+    },
+    {
+        name: 'PHRMSCI 173',
+        id: 'course_phrmsci173',
+        description: 'Pharmacotherapy',
+    },
+    {
+        name: 'PHRMSCI 174',
+        id: 'course_phrmsci174',
+        description: 'Biopharmaceutics and Nanomedicine',
+    },
+    {
+        name: 'PHRMSCI 177',
+        id: 'course_phrmsci177',
+        description: 'Medicinal Chemistry',
+    },
+  ],
+  list4:[]
+
+}
+
+export const BioscienceBS = () => {
+
+  const { state, dispatch } = useCourseContext();
+  
+  useEffect(() => {
+    //assume user render this page ==> data update needed
+    dispatch({type: 'UPDATE_NEEDED', payload: 1})
+
+    //only one time
+    // Each major component will have only 4 secions of case
+    // major class for *needs e.g => 'complete', 'elective(choice)', 'project', 'prefer', 'others'
+    // in case user will have different case, need to figoure out only init case to start
+    // when something is empty, sys uploads all major data
+
+    // only one time run,
+    if (state.major_list.size === 0) {
+      // console.log("saving!!!", state.major_list)
+      savingMajorData(major_data, dispatch);
+    }
+    else {
+      // console.log("saving no needed", state.major_list)
+    }
+  }, []);
 
   const handleAddTaken = (course: string) => {
     dispatch({ type: 'ADD_TAKEN', payload: course });
@@ -40,6 +244,7 @@ export const BioscienceBS = ({major}:any) => {
     }
     setIsAllSelected(!isAllSelected); // Toggle state
   };
+
   const [lowerAllSelected, setLowerAllSelected] = useState(false);
   const [upperCoreAllSelected, setUpperCoreAllSelected] = useState(false);
   const [upperElectivesSelected, setUpperElectivesAllSelected] = useState(false);
@@ -125,7 +330,7 @@ export const BioscienceBS = ({major}:any) => {
     },
     {
         name: 'I&CSCI H32',
-        id: 'course_H32sdfadsfa',
+        id: 'course_H32',
         description: 'Python Programming and Libraries (Accelerated)',
     },
     {

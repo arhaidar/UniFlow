@@ -41,7 +41,7 @@ const Home = ({setMajor}:any) => {
 }
 
 function App() {
-  const [major, setMajor] = useState('');
+  const [major, setMajor] = useState<string>("");
   return (
     <Router>
       <Routes>

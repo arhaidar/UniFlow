@@ -10,6 +10,8 @@ import { savingMajorData } from '../../utils/helper_common/save_all_majorClass'
 // inside the object file, it has different datalist of type: { name: string; id: string; description: string; }
 // but we just need to add 'name' part
 
+// purpose -> complete, elective, project, others
+//C, C, O, P, E * 10
 const major_data = {
   lower_division_courses: [
     {
@@ -667,6 +669,27 @@ const major_data = {
     }
   ],
 }
+const major_comment = [
+  "Lower-division: ",
+  "A. Select one of the following series: I&C SCI 31- 32- 33 or I&C SCI H32- 33",
+  "B. Complete:",
+  "Upper-division: ",
+  "A. Core(complete)",
+  "B. Upper-division electives: Select 11 upper-division courses from the list below. Sections B-1 and B-2 must be completed as part of the 11 upper-division electives.",
+  "B-1. Project Courses: Choose at least 2 projects courses from the following list:",
+  "B-2. Specialization: Select and satisfy the requirements for one of the specializations below. (Note: Students may not pursue more than one specialization.)",
+  "Algorithms: Four courses from the following list:",
+  "Architecture and Embedded Systems: four courses from the following list:",
+  "Bioinformatics: three courses from the following list:",
+  "and complete:",
+  "Information",
+  "and four courses from: *at least one of which must be: COMPSCI 122B, COMPSCI 122C, COMPSCI 122D, COMPSCI 125, COMPSCI 179",
+  "Intelligent Systems",
+  "and at least three courses from:",
+  "Networked Systems",
+  "Systems and Software: three courses from the following list:",
+  "Visual Computing: four courses from the following list:",
+]
 
 export const ComputerScienceBS = () => {
 
@@ -683,8 +706,17 @@ export const ComputerScienceBS = () => {
     // when something is empty, sys uploads all major data
 
     // only one time run,
-    if (state.need_complete.size === 0) {
-      savingMajorData(major_data, );
+    if (state.save_flag === 0) { //save! only one time
+      dispatch({type:"SAVE_ONE_TIME", payload:1})
+      const purpose:string[] = ['ADD_NEED_COMPLETE', 'ADD_NEED_COMPLETE'
+      ,  'ADD_NEED_OTHERS', 'ADD_NEED_PROJECT', 'ADD_NEED_ELECTIVE', 'ADD_NEED_ELECTIVE', 'ADD_NEED_ELECTIVE'
+      , 'ADD_NEED_ELECTIVE', 'ADD_NEED_ELECTIVE', 'ADD_NEED_ELECTIVE', 'ADD_NEED_ELECTIVE', 'ADD_NEED_ELECTIVE'
+      , 'ADD_NEED_ELECTIVE', 'ADD_NEED_ELECTIVE'];
+
+      savingMajorData(major_data, dispatch, purpose);
+    }
+    else {
+      // console.log("saving no needed", state.major_list)
     }
   }, []);
 
