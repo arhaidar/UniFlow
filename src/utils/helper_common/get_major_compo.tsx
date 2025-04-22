@@ -1,6 +1,7 @@
 
 // =============== Major component ===============
 import { ComputerScienceBS } from '../../majorComponents/CS_components/progress'
+import { ComputerScienceBS2 } from '../../majorComponents/CS_components/progress_testing';
 import { BioscienceBS } from '../../majorComponents/BIO_components/progress'
 import { MechanicalEngineeringBS } from '../../majorComponents/MEENG_components/progress'
 
@@ -10,12 +11,11 @@ import React from 'react';
 //NOTE!!:     const { state, dispatch } = useCourseContext(); 
 //        ==> this one, 'useCourseContext' was outside :: not in side the <useCourseContext> </useCourseContext> in mainpage.tsx
 export const getMajorComponents = (userMajor: string,dispatch: React.Dispatch<any>): React.ReactElement => {
-
   dispatch({ type: 'SET_MAJOR', payload: userMajor });
 
   switch (userMajor) {
     case "cs":
-      return <ComputerScienceBS />;
+      return <ComputerScienceBS2 />;
     case "ae":
       return <BioscienceBS />;
     case "me":

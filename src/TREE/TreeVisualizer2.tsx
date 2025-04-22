@@ -200,7 +200,7 @@ const generateTreeData = (data: CourseData): TreeNode => {
 
 interface TreeVisualizerProps {
   data: any;
-  userlist: string[];
+  userlist: string;
   takenlist: string[];
   nextlist: string[];
 }
@@ -213,15 +213,20 @@ export const TreeVisualizer2: React.FC<TreeVisualizerProps> = ({ data, userlist,
   let treeData = data;
   if (!treeData) {
     treeData = defaultTreeData;
-  } else {
+  } 
+  else {
     console.log("Getting data");
+  }
+
+  if(userlist == "") {
+    treeData = defaultTreeData;
   }
   
   const treedata:TreeNode = generateTreeData(treeData);
   let firstLevelChildren = treedata.children || []; // Adjust based on the structure of `treedata`
 
   //filtering...
-  if (userlist && userlist.length > 0) {
+  if (userlist) {
     firstLevelChildren = firstLevelChildren.filter(child => 
       userlist.includes(child.name)
     );
@@ -317,7 +322,7 @@ export const TreeVisualizer2: React.FC<TreeVisualizerProps> = ({ data, userlist,
 
   useEffect(() => {
     //filtering...
-    if (userlist && userlist.length > 0) {
+    if (userlist) {
       firstLevelChildren = firstLevelChildren.filter(child => 
         userlist.includes(child.name)
       );

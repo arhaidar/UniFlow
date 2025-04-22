@@ -26,7 +26,7 @@
 //   );
   
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 
 // NOTE: THIS IS FOR ThE NEW SLIDING SIDEBAR
@@ -49,7 +49,7 @@ export const Sidebar = () => {
     // Toggle dropdown submenus
     const toggleQuarterDropdown = () => setIsQuarterOpen((prev) => !prev);
     const togglePathDropdown = () => setIsPathOpen((prev) => !prev);
-  
+      
     return (
       <nav className={`sidebar ${isOpen ? "open" : "collapsed"}`}>
         <div className="sidebar-header">

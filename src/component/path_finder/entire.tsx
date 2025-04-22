@@ -8,6 +8,7 @@ import { CourseState } from "../../mainpage";
 import { useCourseContext } from '../../mainpage'; //sharing data
 
 import { Preference } from "../../majorComponents/CS_components/preference";
+import { progress_upadate } from "../../utils/helper_common/progress_update";
 
 interface Final_ClassWithRank {
   value: string; // The node value (class name)
@@ -30,6 +31,10 @@ interface CourseData {
 export const PathFinder = () => {
   const { state, dispatch } = useCourseContext();
 
+  useEffect(() => {
+      progress_upadate(dispatch,state)
+  }, []);
+  
   const handleToggleTreeData = (tree: CourseData) => {
     dispatch({ type: 'ADD_TREE', payload: tree });
   };
@@ -41,7 +46,7 @@ export const PathFinder = () => {
     return {
       taken: Array.from(copy_state.taken),
       need_complete: Array.from(copy_state.need_complete),
-      need_elective: Array.from(copy_state.need_elective),
+      need_elective: Array.from(copy_state.need_specilazation),
       need_project: Array.from(copy_state.need_project),
       need_others: Array.from(copy_state.need_others),
       major: 'computer_science',
@@ -132,7 +137,7 @@ export const PathFinder = () => {
         getTreeData(combinedData)
       ]);
 
-      console.log("FRONTEND DATA:::::", combinedData)
+      console.log("FRONTEND DATA:::::", state)
       console.log("FROM THE BACKEND SERVER:::::Tree", backendtreedata.treedata)
       console.log("FROM THE BACKEND SERVER:::::Next", backendnextdata.plan)
 

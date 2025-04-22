@@ -1,72 +1,41 @@
 import React, { useReducer, useState, useEffect, createContext, useContext } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
-
 import './css/cs.css'
 
-import { Error404 } from './component/error/error404'
 import { DashBoard } from './component/dashboard/dashboard';
-
 import { Sidebar } from './component/side_bar/sidebar';
 import { getMajorComponents } from './utils/helper_common/get_major_compo';
-
 import { NextPlanner } from './component/next_planner/next_planner';
 import { CustomPlanner } from './component/custom_planner/custom_planner';
-
-import { ComputerScienceBS } from './majorComponents/CS_components/progress';
-import { Preference } from './majorComponents/CS_components/preference';
-// add other majors components here ...
-
-
-import { PathFinder } from './component/entire_planner/entire'
-import { PathFinder2 } from './component/entire_planner/advanced_entire';
+import { PathFinder } from './component/path_finder/entire'
+import { PathFinder2 } from './component/path_finder/advanced_entire';
+import { PathFinder3 } from './component/path_finder/entire_testing';
 import { TreeVisualizer } from './TREE/TreeVisualizer';
 import { GraphVisualizer } from './TREE/GraphVisualizer';
-
-
-
-/* ======================= difference major =========================
-
-// import { ComputerScienceBS } from './computersciencebs';
-
-// import { AerospaceEngineeringBS } from './aerospaceengineeringbs';
-// import { BiomedicalEngineeringBS } from './biomedicalengineeringbs';
-// import { ComputerEngineeringBS } from './computerengineeringbs';
-// import { ElectricalEngineeringBS } from './electricalengineeringbs';
-// import { MechanicalEngineeringBS } from './mechanicalengineeringbs';
-
-// import { BiologicalSciencesBS } from './Biologicalsciencesbs';
-
-// import { BusinessAdministrationBA } from './Businessadministrationba';
-
-// import { EnglishBA } from './Englishba';
-
-// import { PharmaceuticalSciencesBS } from './Pharmaceuticalsciencesbs';
-
-// import { CriminologyLawandSocietyBA } from './Criminologylawandsocietyba';
-
-// import { PsychologicalScienceBA } from './Psychologicalscienceba';
-
-
-
-
- ======================= difference major ========================= */
+import { PathFinderManual } from './component/path_finder/manual/PathFinderManual';
 
 export type CourseState = {
   major: string;
   taken: Set<string>;
   need_take: Set<string>;
   project: Set<string>;
+  
+  //need list...
   need_complete: Set<string>;
-  need_elective: Set<string>;
+  need_specilazation: Set<string>;
+  need_specilazation_elective: Set<string>;
   need_project: Set<string>;
   need_others: Set<string>;
   prefer: Set<string>;
+  
+  //others...
   upper: Set<string>;
-  specialization: string | null;
+  specialization: string;
   num_total: number;
   num_project: number;
   tree_data:any;
   update_flag:number;
+  save_flag:number;
 };
 
 export type CourseAction =
@@ -77,14 +46,25 @@ export type CourseAction =
   | { type: 'REMOVE_NEED_TAKE'; payload: string } 
   | { type: 'ADD_PROJECT'; payload: string }
   | { type: 'REMOVE_PROJECT'; payload: string }
-  | { type: 'ADD_COMPLETE'; payload: Set<string> }
-  | { type: 'REMOVE_COMPLETE'; payload: string }
-  | { type: 'ADD_ELECTIVE'; payload: Set<string> }
-  | { type: 'REMOVE_ELECTIVE'; payload: string }
+  // FIRST SAVING
+  | { type: 'ADD_NEED_COMPLETE'; payload: Set<string> }
+  | { type: 'ADD_NEED_SPECIALIZATION'; payload: Set<string> }
+  | { type: 'ADD_NEED_SPECIALIZATION_ELECTIVE'; payload: Set<string> }
   | { type: 'ADD_NEED_PROJECT'; payload: Set<string> }
+  | { type: 'ADD_NEED_OTHERS'; payload: Set<string> }
+  // UPDATE
+  | { type: 'UPDATE_NEED_COMPLETE'; payload: Set<string> }
+  | { type: 'UPDATE_NEED_ELECTIVE'; payload: Set<string> }
+  | { type: 'UPDATE_NEED_PROJECT'; payload: Set<string> }
+  | { type: 'UPDATE_NEED_OTHERS'; payload: Set<string> }
+  | { type: 'BATCH_UPDATE_NEEDS'; payload: Set<string> }
+
+  // OTHERS
   | { type: 'REMOVE_NEED_PROJECT'; payload: string }
-  | { type: 'ADD_OTHERS'; payload: Set<string> }
+  | { type: 'REMOVE_ELECTIVE'; payload: string }
+  | { type: 'REMOVE_COMPLETE'; payload: string }
   | { type: 'REMOVE_OTHERS'; payload: string }
+
   | { type: 'ADD_PREFER'; payload: string }
   | { type: 'REMOVE_PREFER'; payload: string }
   | { type: 'ADD_UPPER'; payload: string }
@@ -94,6 +74,7 @@ export type CourseAction =
   | { type: 'TOGGLE_SPECIALIZATION'; payload: string }
   | { type: 'ADD_TREE'; payload: any }
   | { type: 'UPDATE_NEEDED'; payload: number}
+  | { type: 'SAVE_ONE_TIME'; payload: number}
   
 const initialState: CourseState = {
   major: "student major",
@@ -101,16 +82,18 @@ const initialState: CourseState = {
   need_take: new Set<string>(),
   project: new Set<string>(),
   need_complete: new Set<string>(),
-  need_elective: new Set<string>(),
+  need_specilazation: new Set<string>(),
+  need_specilazation_elective: new Set<string>(),
   need_project: new Set<string>(),
   need_others: new Set<string>(),
   prefer: new Set<string>(),
   upper: new Set<string>(),
-  specialization: null,
+  specialization: "",
   num_total: 0, 
   num_project: 0, 
   tree_data: null,
   update_flag: 0, //init: upload not needed
+  save_flag: 0, //only one time thing
 };
 
 function courseReducer(state: CourseState, action: CourseAction, ): CourseState {
@@ -167,30 +150,84 @@ function courseReducer(state: CourseState, action: CourseAction, ): CourseState 
         num_project: newProject.size, 
       };
     }
-    case 'ADD_COMPLETE':
+    //NEED LIST UPDATE ACTIONS *ONE TIME RUNNING ==============================
+    case 'ADD_NEED_COMPLETE':
       return {
         ...state,
-        need_complete: new Set(action.payload)
+        need_complete: new Set([...state.need_complete, ...action.payload])
       };
-    case 'ADD_ELECTIVE':
+    case 'ADD_NEED_SPECIALIZATION':
       return {
         ...state,
-        need_elective: new Set(action.payload)
+        need_specilazation: new Set(action.payload)
+      };
+    case 'ADD_NEED_SPECIALIZATION_ELECTIVE':
+      return {
+        ...state,
+        need_specilazation_elective: new Set(action.payload)
       };
     case 'ADD_NEED_PROJECT':
       return {
         ...state,
-        need_project: new Set(action.payload)
+        need_project: new Set([...state.need_project, ...action.payload])
       };
-    case 'ADD_OTHERS':
+    case 'ADD_NEED_OTHERS':
       return {
         ...state,
-        need_others: new Set(action.payload)
+        need_others: new Set([...state.need_others, ...action.payload])
       };
+    // UPDATE DATA =======================
+    case 'UPDATE_NEED_COMPLETE':
+      let new_data = new Set(state.need_complete);
+      
+      for (const item of action.payload) {
+        new_data.delete(item); // remove each item in the Set<string>
+      }
+      return {
+        ...state,
+        need_take: new_data
+      };
+    // case 'UPDATE_NEED_ELECTIVE':
+    //   new_data = new Set(state.need_elective);
+    //   for (const item of action.payload) {
+    //     new_data.delete(item); // remove each item in the Set<string>
+    //   }
+    //   return {
+    //     ...state,
+    //     need_take: new_data
+    //   };
+    case 'UPDATE_NEED_OTHERS':
+      new_data = new Set(state.need_others);
+      for (const item of action.payload) {
+        new_data.delete(item); // remove each item in the Set<string>
+      }
+      return {
+        ...state,
+        need_take: new_data
+      };
+    case 'UPDATE_NEED_PROJECT':
+      new_data = new Set(state.need_project);
+      for (const item of action.payload) {
+        new_data.delete(item); // remove each item in the Set<string>
+      }
+      return {
+        ...state,
+        need_take: new_data
+      };
+    case "BATCH_UPDATE_NEEDS": //once processing
+      const taken = action.payload
+      return {
+        ...state,
+        need_complete: new Set([...state.need_complete].filter(x => !taken.has(x))),
+        need_specilazation: new Set([...state.need_specilazation].filter(x => !taken.has(x))),
+        need_others: new Set([...state.need_others].filter(x => !taken.has(x))),
+        need_project: new Set([...state.need_project].filter(x => !taken.has(x))),
+      };
+    //Preference ADDING ACTION ==============================
     case 'ADD_PREFER':
       return {
         ...state,
-        prefer: new Set([...state.prefer, action.payload])
+        prefer: new Set([...state.prefer, action.payload]) //merging
       };
     case 'REMOVE_PREFER': {
       const newPrefer = new Set(state.prefer);
@@ -200,6 +237,7 @@ function courseReducer(state: CourseState, action: CourseAction, ): CourseState 
         prefer: newPrefer
       };
     }
+    // CALCULATE # OF CLASS NEEDED ACTION ====================
     case 'ADD_UPPER':
       return {
         ...state,
@@ -207,7 +245,7 @@ function courseReducer(state: CourseState, action: CourseAction, ): CourseState 
         num_total: state.upper.size,
         num_project: state.project.size, // Subtract from num_project
       };
-    case 'REMOVE_UPPER': {
+    case 'REMOVE_UPPER':
       const newUpper = new Set(state.upper);
       newUpper.delete(action.payload);
       return {
@@ -216,11 +254,10 @@ function courseReducer(state: CourseState, action: CourseAction, ): CourseState 
         num_total: state.upper.size,
         num_project: state.project.size, // Subtract from num_project
       };
-    }
     case 'TOGGLE_SPECIALIZATION':
       return {
         ...state,
-        specialization: state.specialization === action.payload ? null : action.payload,
+        specialization: state.specialization === action.payload ? "" : action.payload,
       };
     case 'ADD_TREE':
       return {
@@ -231,17 +268,21 @@ function courseReducer(state: CourseState, action: CourseAction, ): CourseState 
       return {
         ...state,
         update_flag:action.payload, //update 
-      }
+      };
+    case 'SAVE_ONE_TIME':
+      return {
+        ...state,
+        save_flag:1, //update 
+      };
     default:
       return state;
   }
 }
 
-//centerize data
+//centerize data -> sepearte later
 type CourseContextType = {
   state: CourseState;
   dispatch: React.Dispatch<CourseAction>;
-  // state2: UserInfo;
 };
 
 const CourseContext = createContext<CourseContextType | null>(null);
@@ -257,9 +298,14 @@ export const useCourseContext = () => {
 export const MainPage = ({major}:any) => {
   const [state, dispatch] = useReducer(courseReducer, initialState, () => initialState); //init only for less memeory usage
   const [componentPage, setComponentPage] = useState<React.ReactElement | null>(null); // Dynamically change the component page
-
+  
   useEffect(() => {
-    setComponentPage(getMajorComponents(major, dispatch)); //error already handled in function.
+      if(!major) {
+        setComponentPage(getMajorComponents(state.major, dispatch)); //keep maintaining user major
+      } 
+      else {
+        setComponentPage(getMajorComponents(major, dispatch)); //error already handled in function.
+      }
   }, [major]);
   
   return (
@@ -272,7 +318,7 @@ export const MainPage = ({major}:any) => {
             <Route path="/progress" element={componentPage} />
             <Route path="/nextplanner" element={<NextPlanner />} />
             <Route path="/customplanner" element={<CustomPlanner />} />
-            <Route path="/entireplanner" element={<PathFinder />} />
+            <Route path="/entireplanner" element={<PathFinderManual />} />
             <Route path="/majortree" element={<TreeVisualizer />} />
             <Route path="/majorgraph" element={<GraphVisualizer />} />
             <Route path="/test" element={<PathFinder2 />} />

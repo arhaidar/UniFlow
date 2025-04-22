@@ -29,20 +29,25 @@ export const Preference = () => {
   };
 
   const handleAddComplete = (list: Set<string>) => {
-    dispatch({ type: 'ADD_COMPLETE', payload: list });
+    dispatch({ type: 'ADD_NEED_COMPLETE', payload: list });
   };
   const handleAddElective = (list: Set<string>) => {
-    dispatch({ type: 'ADD_ELECTIVE', payload: list });
+    dispatch({ type: 'ADD_NEED_ELECTIVE', payload: list });
   };
   const handleAddProject = (list: Set<string>) => {
     dispatch({ type: 'ADD_NEED_PROJECT', payload: list });
   };
   const handleAddOthers = (list: Set<string>) => {
-    dispatch({ type: 'ADD_OTHERS', payload: list });
+    dispatch({ type: 'ADD_NEED_OTHERS', payload: list });
   };
 
+  const update_major_data = () => {
+    //depends on major, it will have different things
+    
+  }
   const completeCourseCount = () => {
     console.log("RUN UPDATE FUNC\n")
+    
     const specializationCompleteList:string|null = state.specialization; //string
     let completeCourses: { name: string; id: string; description: string; }[] = []; //we just need name... but upper_specialization_algorithm_complete list has this kind of structure...
     let electiveCourses: { name: string; id: string; description: string; }[] = []; //we just need name...
