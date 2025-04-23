@@ -15,7 +15,7 @@ import { StartPathFinder } from './StartPathFinder';
 
 export const PathFinderManual = () => {
     const { plannerStatus } = usePathFinder();
-    const [loading, setLoading] = useState(true); // Adding loading state
+    const [loading, setLoading] = useState(false); // Adding loading state
     //data update
     const { state, dispatch } = useCourseContext();
     useEffect(() => {
