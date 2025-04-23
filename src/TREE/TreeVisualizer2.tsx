@@ -206,32 +206,47 @@ interface TreeVisualizerProps {
 }
 
 export const TreeVisualizer2: React.FC<TreeVisualizerProps> = ({ data, userlist, takenlist, nextlist }) => {
-  //data = tree data
-  //userlist = what user select to see in tree among highest one
-  //takenlist = list of they select to take -> for later using tree node coloring, red background / black border / white font color
-  //nextlist = list of next available to take -> for later using tree node coloring, blue background / black border / white font color
-  let treeData = data;
-  if (!treeData) {
-    treeData = defaultTreeData;
-  } 
-  else {
-    console.log("Getting data");
-  }
-
-  if(userlist == "") {
-    treeData = defaultTreeData;
-  }
+  // State to hold the filtered tree
+  const [userSelectedTree, setUserSelectedTree] = useState<TreeNode | null>(null);
   
-  const treedata:TreeNode = generateTreeData(treeData);
-  let firstLevelChildren = treedata.children || []; // Adjust based on the structure of `treedata`
+  // Default tree data (assuming defaultTreeData is already available)
+  const defaultTreeData = { /* your defaultTreeData */ };
 
-  //filtering...
-  if (userlist) {
-    firstLevelChildren = firstLevelChildren.filter(child => 
-      userlist.includes(child.name)
-    );
-  }
-    
+  useEffect(() => {
+    let treeData;
+
+    // Determine if data is available; if not, use the default data
+    if (!data || userlist === "") {
+      treeData = defaultTreeData;
+    } else {
+      console.log("Getting data");
+      treeData = data;
+    }
+
+    const treedata: TreeNode = generateTreeData(treeData); // Assuming this function converts data to TreeNode structure
+
+    // If userlist is set, find the corresponding node in the tree
+    if (userlist) {
+      const findNodeByName = (node: TreeNode, name: string): TreeNode | null => {
+        if (node.name === name) {
+          return node;
+        }
+        if (node.children) {
+          for (let child of node.children) {
+            const result = findNodeByName(child, name);
+            if (result) return result;
+          }
+        }
+        return null;
+      };
+
+      const selectedNode = findNodeByName(treedata, userlist);
+      setUserSelectedTree(selectedNode); // Set the selected node
+    } else {
+      setUserSelectedTree(null); // Reset if no userlist is selected
+    }
+  }, [data, userlist, takenlist, nextlist]); // Dependencies include all relevant props
+
   const renderRectSvgNode = ({ nodeDatum, toggleNode }: any) => {
     const fontSize = 20;
     const padding = 6; 
@@ -244,19 +259,13 @@ export const TreeVisualizer2: React.FC<TreeVisualizerProps> = ({ data, userlist,
 
     let displayText;
     if (isOrNode) {
-        displayText = "One of";
+      displayText = "One of";
     } else if (isAndNode) {
-        displayText = "All of";
+      displayText = "All of";
     } else {
-        displayText = nodeDatum.name;
+      displayText = nodeDatum.name;
     }
 
-    // const rectFill = "white";
-    // const fillcolor = isOrNode ? "white" : isAndNode ? "white" : isChild ? "gray" : "white";
-    // const color = isAndNode ? "none" : (isOrNode ? rectFill : (isChild ? "gray" : "white")); 
-    // const border = isOrNode ? rectFill : (isAndNode ? "none" : (isChild ? "black" : "black"));
-
-    // Check if the node is in takenlist or nextlist
     const isTaken = takenlist.includes(nodeDatum.name);
     const isNext = nextlist.includes(nodeDatum.name);
 
@@ -264,36 +273,23 @@ export const TreeVisualizer2: React.FC<TreeVisualizerProps> = ({ data, userlist,
     let rectFill = "white";
     let textColor = "black";
     let borderColor = "black";
-    
+
     // Apply coloring based on node type and lists
     if (isTaken) {
-      // For taken items: red background, black border, white text
       rectFill = "red";
       textColor = "white";
       borderColor = "black";
     } else if (isNext) {
-      // For next available items: blue background, black border, white text
       rectFill = "blue";
       textColor = "white";
       borderColor = "black";
-    } else {
-      // Default styling based on node type
-      if (isOrNode) {
-        rectFill = "white";
-        textColor = "black";
-        borderColor = "none";
-      } else if (isAndNode) {
-        rectFill = "white";
-        textColor = "black";
-        borderColor = "none";
-      }
     }
 
     const yPosition1 = isOrNode ? rectHeight + 2 : isAndNode ? rectHeight + 2 : -rectHeight / 1.7;
     const yPosition2 = isOrNode ? rectHeight + 21 : isAndNode ? rectHeight + 21 : "";
 
     return (
-      <g onClick={toggleNode} >
+      <g onClick={toggleNode}>
         <rect 
           width={rectWidth} 
           height={rectHeight} 
@@ -317,60 +313,51 @@ export const TreeVisualizer2: React.FC<TreeVisualizerProps> = ({ data, userlist,
     );
   };
 
-  const x_center = 125;
-  const y_center = 80; 
+  // Positioning for the tree
+  const x_center = 375;
+  const y_center = 60;
 
-  useEffect(() => {
-    //filtering...
-    if (userlist) {
-      firstLevelChildren = firstLevelChildren.filter(child => 
-        userlist.includes(child.name)
-      );
-    }
-  },[userlist,takenlist]) 
-
-    return (
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", // Automatic columns        
-          justifyContent: "center", // Center horizontally
-          gap: "8px", // Small gap for spacing
-          height: "100%", // Fill second-portion height
-          width: "100%", // Fill second-portion width
-          boxSizing: "border-box",
-        }}
-      >      
-        {firstLevelChildren.map((child, index) => (
-          
-          <div
-            key={index}
-            style={{
-              width: "100%",
-              height: "100%",
-              border: "1px solid #000",
-              borderRadius: "8px",
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              // transform: "scale(0.94)",
-            }}
-          >
-            <Tree
-              data={child}
-              orientation="vertical"
-              pathFunc="step" // Makes the connection lines straight
-              separation={{ siblings: 1, nonSiblings: 1 }}
-              depthFactor={100} //length of connection line
-              nodeSize={{ x: 130, y: 50 }} // Adjusts node spacing
-              renderCustomNodeElement={renderRectSvgNode} //custom setting
-              translate={{ x: x_center, y: y_center }} // Apply the translation
-              scaleExtent={{ min: 0.2, max: 4 }} // Allow zoom-out + first-render
-              zoomable={true} // Enable zoomable
-            />
-            
-          </div>
-          ))} 
-      </div>
-    );
-  };
+  return (
+    <div
+      style={{
+        display: "grid",
+        gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", // Automatic columns        
+        justifyContent: "center", // Center horizontally
+        gap: "8px", // Small gap for spacing
+        height: "100%", // Fill second-portion height
+        width: "100%", // Fill second-portion width
+        boxSizing: "border-box",
+        overflow: "auto", // Allow scrolling if needed
+      }}
+    >      
+      {userSelectedTree ? (
+        <div
+          style={{
+            width: "95%",
+            height: "95%", // Limit the height of each tree
+            border: "1px solid #000",
+            borderRadius: "8px",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <Tree
+            data={userSelectedTree}
+            orientation="vertical"
+            pathFunc="step" // Makes the connection lines straight
+            separation={{ siblings: 1, nonSiblings: 1 }}
+            depthFactor={100} //length of connection line
+            nodeSize={{ x: 130, y: 50 }} // Adjusts node spacing
+            renderCustomNodeElement={renderRectSvgNode} //custom setting for each nodes in tree
+            translate={{ x: x_center, y: y_center }} // Apply the translation
+            scaleExtent={{ min: 0.1, max: 0.7 }} // Allow zoom-out + first-render
+            zoomable={true} // Enable zoomable
+          />
+        </div>
+      ) : (
+        <div>Choose the class to see prerequisite Tree</div>
+      )}
+    </div>
+  );
+};

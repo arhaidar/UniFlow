@@ -1,15 +1,23 @@
 import { Line } from 'rc-progress';
+import { usePathFinder } from "./PathFinderContext";
 
 export const UserProgress = ({state}:any) => {
+    const { 
+            nextToTake, takenListForTree,
+          } = usePathFinder();
+    console.log(takenListForTree, nextToTake)
 
     const renderBox = (title: string, selected: number, total:number,list: Set<string>) => (
-        <div className="flex flex-col  border rounded-xl p-4 relative shadow-md bg-white w-[25%] mx-[0.1%] min-w-[50px]">
+        <div className="flex flex-col  border rounded-xl p-3 relative shadow-md bg-white w-[25%] mx-[0.1%] min-w-[50px]">
             <div className='mb-5'>
-                <p className="text-base font-semibold mb-2 truncate">{title}</p>
+                <p className="text-sm font-semibold mb-1 truncate">{title}</p>
                 <Line percent={(selected / total) * 100} strokeWidth={5} strokeColor="#4ade80" className="mb-3" />
                 <p>{`${selected} / ${total}`}</p>
             </div>  
             <div className="flex flex-col items-start m-0 p-0">
+                {/* check if it has matching string with takenListForTree and nextTotake
+                for css, takenListForTree -> strike trough and red color / nextTotake -> blue color
+                */}
                 {Array.from(list).map((data, idx) => (
                     <div key={idx}>{data}</div>
                 ))}

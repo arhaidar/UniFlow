@@ -13,25 +13,11 @@ export const UserIntersection = () => {
         selected_tree1, selected_tree2
       } = usePathFinder();
 
-
-
-    //data processing functions will be here 
-    // sepearete functiosn later
-
     const takenListRef = useRef(new Set<string>());
     
     const [takenList, setTakenList] = useState(new Set<string>());
-    //const [nextList, setNextList] = useState<Set<string>>(new Set());
-      
-    //const [takenListForTree, setTakenListForTree] = useState<string[]>([]);
-    //const [nextListForTree, setNextListForTree] = useState<string[]>([]);
-      
-    //const [selected, setSelected] = useState<string[]>([]);
-    //const [isOpen, setIsOpen] = useState(false);
-    //const [options, setOptions] = useState<string[]>([]);
     
     const findParent = (childCourse: string) => {
-    // for now, using 'testData' change this later 'tree'  
     if(tree === undefined) {
         return [];
     }
@@ -67,14 +53,10 @@ export const UserIntersection = () => {
     }, [takenListRef.current.size]); // This will update when takenListRef changes
     
     useEffect(() => {
-    // This ensures we're using the most recent state values
     setTakenListForTree(Array.from(takenList));
     setNextListForTree(Array.from(nextList));
     }, [takenList, nextList]);
       
-    //   useEffect(() => {
-    //     setOptions(findHighestNodes(tree as any)); // Force cast to CourseData
-    //   }, [tree]);
     
     const handleStudentClick = async (classdata: string, index: number) => {
 
@@ -203,76 +185,79 @@ export const UserIntersection = () => {
         }); 
     };
     
-    
-
     return (
-        <div>
-            <div className="entire_planner_table">
-            {plannerStatus && userGraduationDate?.map((option, index) => (
-                <div key={option.value} className="graduation_row">
-                  <div className="quarter_container">
-                    {option.label}
-                    <div className="plan_container">
-                      <hr />
-                      <div className="dot-container">
-                        <div className="dot"></div>
-                        <div className="dot"></div>
-                        <div className="dot"></div>
-                      </div>
-                      {/* Filter classes that belong to this graduation option */}
-                      {nextToTake &&
-                        nextToTake[index]
-                          ?.slice() // Create a copy to avoid mutating state
-                          .sort((a, b) => {
-                            const inTakenA = takenList.has(a);
-                            const inTakenB = takenList.has(b);
-                            const inNextA = nextList.has(a);
-                            const inNextB = nextList.has(b);
-                            const inPrevA = index - 1 >= 0 && nextToTake[index - 1].includes(a);
-                            const inPrevB = index - 1 >= 0 && nextToTake[index - 1].includes(b);
-
-                            // Sort order: 1. taken(red) 2. nextList(blue) 3. existed in prev index(green)
-                            if (inTakenA !== inTakenB) return inTakenA ? -1 : 1; // Taken first
-                            if (inNextA !== inNextB) return inNextA ? -1 : 1; // Next second
-                            if (inPrevA !== inPrevB) return inPrevA ? -1 : 1; // Prev index third
-                            return 0; // Otherwise, maintain order
-                          })
-                          .map((item, itemIndex) => {
-                            const next = nextList.has(item);
-                            const taken = takenList.has(item);
-                            const existsInPreviousIndex = index - 1 >= 0 && nextToTake[index - 1].includes(item);
-
-                            let newClass = "class_item"; // Default class
-                            
-                            // Priority: 1. taken(red) 2. nextList(blue) 3. existed in prev index(green)
-                            if(taken) {
-                              newClass = "text-red";
-                            }
-                            else if(existsInPreviousIndex && (taken || next)) {
-                              newClass = "text-green";
-                            }else if (next) {
-                              newClass = "text-blue"; // Blue
-                            }
-
-                            return (
-                              <div key={itemIndex} className="class_container"
-                              >
-                                <a
-                                  className={`${newClass}`}
-                                  onClick={newClass === "class_item" ? undefined : () => handleStudentClick(item, index)}
-                                  key={item}
-                                >
-                                  {item}
-                                </a>
-                              </div>
-                            );
-                          })}
-                    </div>
-                  </div>
+      <div className="w-full px-4 mt-6 overflow-x-auto max-h-[70vh] overflow-y-hidden border border-gray-300 min-h-[68vh] ">
+        <div className="flex flex-row gap-3 min-w-fit">
+        {plannerStatus && userGraduationDate?.map((option, index) => (
+            <div className="min-w-[222px] max-h-[70vh] overflow-y-auto">
+              <div className="shadow-md border border-gray-300 bg-[#F4F7FF] rounded-lg p-3 flex flex-col gap-1">
+                <h2 className="text-sm font-semibold text-gray-700 text-center">{option.label}</h2>
+                <hr className="my-0 border-gray-300"/>
+                <div className="flex flex-col items-center gap-1.5">
+                  <div
+                    className="w-1 h-1 bg-black rounded-full"
+                    style={{ animation: 'blink 1.5s infinite', animationDelay: '0s' }}
+                  ></div>
+                  <div
+                    className="w-1 h-1 bg-black rounded-full"
+                    style={{ animation: 'blink 1.5s infinite', animationDelay: '0.2s' }}
+                  ></div>
+                  <div
+                    className="w-1 h-1 bg-black rounded-full"
+                    style={{ animation: 'blink 1.5s infinite', animationDelay: '0.4s' }}
+                  ></div>
                 </div>
-            ))}
+                {/* Filter classes that belong to this graduation option */}
+                {nextToTake &&
+                  nextToTake[index]
+                    ?.slice() // Create a copy to avoid mutating state
+                    .sort((a, b) => {
+                      const inTakenA = takenList.has(a);
+                      const inTakenB = takenList.has(b);
+                      const inNextA = nextList.has(a);
+                      const inNextB = nextList.has(b);
+                      const inPrevA = index - 1 >= 0 && nextToTake[index - 1].includes(a);
+                      const inPrevB = index - 1 >= 0 && nextToTake[index - 1].includes(b);
 
-          </div>
-        </div>
+                      // Sort order: 1. taken(red) 2. nextList(blue) 3. existed in prev index(green)
+                      if (inTakenA !== inTakenB) return inTakenA ? -1 : 1; // Taken first
+                      if (inNextA !== inNextB) return inNextA ? -1 : 1; // Next second
+                      if (inPrevA !== inPrevB) return inPrevA ? -1 : 1; // Prev index third
+                      return 0; // Otherwise, maintain order
+                    })
+                    .map((item, itemIndex) => {
+                      const next = nextList.has(item);
+                      const taken = takenList.has(item);
+                      const existsInPreviousIndex = index - 1 >= 0 && nextToTake[index - 1].includes(item);
+
+                      let newClass = "text-gray-800"; // Default
+
+                      if (taken) {
+                        newClass = "text-red-500";
+                      } else if (existsInPreviousIndex && (taken || next)) {
+                        newClass = "text-green-500";
+                      } else if (next) {
+                        newClass = "text-blue-500";
+                      }
+
+                      return (
+                        <div key={itemIndex} className="rounded-md bg-white shadow-sm border border-gray-300 px-2 py-1.5 my-0.5"
+                        >
+                          <a
+                            className={`block text-sm font-medium cursor-pointer ${newClass}`}
+                            onClick={newClass === "text-gray-800" ? undefined : () => handleStudentClick(item, index)}
+                            key={item}
+                          >
+                            {item}
+                          </a>
+                          <p className="text-sm text-gray-600">class description</p>
+                        </div>
+                      );
+                    })}
+              </div>
+            </div>
+        ))}
+      </div>
+      </div>
     )
 }

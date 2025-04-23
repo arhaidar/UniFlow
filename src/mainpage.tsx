@@ -12,8 +12,8 @@ import { PathFinder2 } from './component/path_finder/advanced_entire';
 import { PathFinder3 } from './component/path_finder/entire_testing';
 import { TreeVisualizer } from './TREE/TreeVisualizer';
 import { GraphVisualizer } from './TREE/GraphVisualizer';
-import { PathFinderManual } from './component/path_finder/manual/PathFinderManual';
-
+import { PathFinderContainer, PathFinderManual } from './component/path_finder/manual/PathFinderManual';
+import { StartPathFinder } from './component/path_finder/manual/StartPathFinder';
 export type CourseState = {
   major: string;
   taken: Set<string>;
@@ -343,7 +343,7 @@ export const MainPage = ({major}:any) => {
             <Route path="/progress" element={componentPage} />
             <Route path="/nextplanner" element={<NextPlanner />} />
             <Route path="/customplanner" element={<CustomPlanner />} />
-            <Route path="/entireplanner" element={<PathFinderManual />} />
+            <Route path="/entireplanner" element={<PathFinderContainer />} />
             <Route path="/majortree" element={<TreeVisualizer />} />
             <Route path="/majorgraph" element={<GraphVisualizer />} />
             <Route path="/test" element={<PathFinder2 />} />

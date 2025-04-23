@@ -11,23 +11,23 @@ export const Section2 = () => {
       } = usePathFinder();
 
     return (
-        <div className="flex flex-col h-screen">
-            <div className="flex-1">
-                <TreeVisualizer2 
-                    data={tree} 
-                    userlist={selected_tree1} 
-                    takenlist={takenListForTree} 
-                    nextlist={nextListForTree} 
-                />
-            </div>
-            <div className="flex-1">
-                <TreeVisualizer2 
-                    data={tree} 
-                    userlist={selected_tree2} 
-                    takenlist={takenListForTree} 
-                    nextlist={nextListForTree} 
-                />
-            </div>
+    <div className="flex flex-col h-screen justify-center items-center">
+        <div className="flex-1 flex justify-center items-center w-full">
+            <TreeVisualizer2 
+            data={tree} 
+            userlist={selected_tree1} 
+            takenlist={takenListForTree} 
+            nextlist={nextListForTree} 
+            />
         </div>
+        <div className="flex-1 flex justify-center items-center w-full">
+            <TreeVisualizer2 
+            data={tree} 
+            userlist={selected_tree2} 
+            takenlist={takenListForTree} 
+            nextlist={nextListForTree} 
+            />
+        </div>
+    </div>
     )
 }
