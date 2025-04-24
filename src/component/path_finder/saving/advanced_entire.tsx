@@ -1,15 +1,15 @@
 import React, { useState,useEffect,useRef } from "react";
 import Tree from 'react-d3-tree';
 
-import { TreeVisualizer } from "../../TREE/TreeVisualizer"
-import { TreeVisualizer2 } from "../../TREE/TreeVisualizer2";
-import { findHighestNodes } from "../../TREE/TreeVisualizer2";
+import { TreeVisualizer } from "../../../TREE/TreeVisualizer"
+import { TreeVisualizer2 } from "../../../TREE/TreeVisualizer2";
+import { findHighestNodes } from "../../../TREE/TreeVisualizer2";
 
 import './entire.css'
-import { CourseState } from "../../mainpage";
-import { useCourseContext } from '../../mainpage'; //sharing data
+import { CourseState } from "../../../mainpage";
+import { useCourseContext } from '../../../mainpage'; //sharing data
 
-import { Preference } from "../../majorComponents/CS_components/preference";
+import { Preference } from "../../../majorComponents/CS_components/preference";
 
 interface Final_ClassWithRank {
   value: string; // The node value (class name)

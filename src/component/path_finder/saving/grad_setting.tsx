@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { getGraduationData } from "../../utils/helper_common/graduation_data";
+import { getGraduationData } from "../../../utils/helper_common/graduation_data";
 
 interface GraduationOption {
     label: string;

@@ -3,6 +3,16 @@ import { useState } from 'react'; // ✅ Add useState here
 import { useCourseContext } from '../../mainpage';
 
 import { savingMajorData } from '../../utils/helper_common/save_all_majorClass'
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Separator } from "@/components/ui/separator";
+import { Checkbox } from "@/components/ui/checkbox"
 
 // { name: string; id: string; description: string; }[] = 
 // all major data will be differenet
@@ -803,91 +813,138 @@ export const ComputerScienceBS2 = () => {
   };
   
   return (
-    <div className="whole">
-      <div className="main_container">
-        <h2 id="Step-1">Course Selection - Step 1: select courses you've already taken</h2>
-        <div className="sub_container">
-        {
-          Object.entries(major_data).map(([sectionName, courseList], index) => (
-            <div key={sectionName}>
-              {major_comment_group[index]?.map((comment, cIndex) => (
-                <p key={`comment-${index}-${cIndex}`}>{comment}{`comment-${index}-${cIndex}`}</p>
-              ))}
-              {courseList.map((course) => (
-                <label key={course.id} className="clickable-box" htmlFor={course.id}>
-                  <input
-                    type="checkbox"
-                    id={course.id}
-                    className="custom-checkbox"
-                    checked={state.taken.has(course.name)}
-                    onChange={() => handleCheckboxClick(course.name)}
-                  />
-                  <span className="checkbox-text name">{course.name}</span>
-                  <div className="vertical-line"></div>
-                  <span className="checkbox-text description">{course.description}</span>
-                </label>
-              ))}
-            </div>
-          ))
-        }
-        </div>
-        
-        <div className='sub_container'>
-          <div className="upper_div_specialization_list">
+    <div className="w-full px-6 py-10 bg-white rounded-xl shadow-md">
+      <h2 className="text-2xl font-semibold mb-8" id="Step-1">
+        Course Selection - Step 1: Select courses you've already taken
+      </h2>
+
+      <div className="space-y-12">
+        {Object.entries(major_data).map(([sectionName, courseList], index) => (
+          <div key={sectionName} className="space-y-4">
+            {major_comment_group[index]?.map((comment, cIndex) => (
+              <p key={`comment-${index}-${cIndex}`} className="text-muted-foreground">
+                {comment}
+              </p>
+            ))}
+
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="w-[70px]">Select</TableHead>
+                  <TableHead>Course Name</TableHead>
+                  <TableHead>Description</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {courseList.map((course) => (
+                  <TableRow
+                    key={course.id}
+                    className="cursor-pointer"
+                    onClick={() => handleCheckboxClick(course.name)}
+                  >
+                    <TableCell>
+                      <Checkbox
+                        id={course.id}
+                        checked={state.taken.has(course.name)}
+                        onCheckedChange={() => handleCheckboxClick(course.name)}
+                        onClick={(e) => e.stopPropagation()} // prevents double toggle
+                      />
+                    </TableCell>
+                    <TableCell className="font-medium">{course.name}</TableCell>
+                    <TableCell>{course.description}</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+
+            <Separator className="my-6" />
+          </div>
+        ))}
+
+        <div className="space-y-6">
+          <div className="flex flex-wrap gap-2">
             {Object.keys(specializationMeta).map((spec) => (
-              <button key={spec} onClick={() => handleToggleSpecialization(spec)}>
+              <button
+                key={spec}
+                onClick={() => handleToggleSpecialization(spec)}
+                className="px-4 py-2 rounded-lg border border-gray-300 hover:bg-muted"
+              >
                 {spec}
               </button>
             ))}
           </div>
-          
+
           {Object.entries(specializationMeta).map(([specName, meta]) => {
             if (!isSpecializationActive(specName)) return null;
 
-            const mainCourses:majorDataType[] = specializations[meta.dataKey] || [];
-            let chooseCourses:majorDataType[] = []
-            if ('chooseKey' in meta) { //checking 'key' in object of key (=value)
-              chooseCourses = specializations[meta.chooseKey];
-            }
+            const mainCourses = specializations[meta.dataKey] || [];
+            const chooseCourses = 'chooseKey' in meta ? specializations[meta.chooseKey] : [];
 
             return (
-              <div key={specName}>
-                <hr />
-                <h3>{specName}:</h3>
-                <div className="sub_container2">
-                  {mainCourses.map((course) => (
-                    <label key={course.id} className="clickable-box" htmlFor={course.id}>
-                      <input
-                        type="checkbox"
-                        id={course.id}
-                        className="custom-checkbox"
-                        checked={state.taken.has(course.name)}
-                        onChange={() => handleCheckboxClick(course.name)}
-                      />
-                      <span className="checkbox-text name">{course.name}</span>
-                      <div className="vertical-line"></div>
-                      <span className="checkbox-text description">{course.description}</span>
-                    </label>
-                  ))}
-                  <hr />
-                  {chooseCourses.length !== 0 && (
-                    <h4>Select at least {meta.minCourses} courses</h4>
-                  )}
-                  {chooseCourses.map((course) => (
-                    <label key={course.id} className="clickable-box" htmlFor={course.id}>
-                      <input
-                        type="checkbox"
-                        id={course.id}
-                        className="custom-checkbox"
-                        checked={state.taken.has(course.name)}
-                        onChange={() => handleCheckboxClick(course.name)}
-                      />
-                      <span className="checkbox-text name">{course.name}</span>
-                      <div className="vertical-line"></div>
-                      <span className="checkbox-text description">{course.description}</span>
-                    </label>
-                  ))}
-                </div>
+              <div key={specName} className="space-y-6">
+                <h3 className="text-xl font-semibold">{specName}:</h3>
+
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead className="w-[60px]">Select</TableHead>
+                      <TableHead>Course Name</TableHead>
+                      <TableHead>Description</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {mainCourses.map((course) => (
+                      <TableRow
+                        key={course.id}
+                        className="cursor-pointer"
+                        onClick={() => handleCheckboxClick(course.name)}
+                      >
+                        <TableCell>
+                          <Checkbox
+                            id={course.id}
+                            checked={state.taken.has(course.name)}
+                            onCheckedChange={() => handleCheckboxClick(course.name)}
+                            onClick={(e) => e.stopPropagation()} // prevents double toggle
+                          />
+                        </TableCell>
+                        <TableCell className="font-medium">{course.name}</TableCell>
+                        <TableCell>{course.description}</TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+
+                {chooseCourses.length > 0 && (
+                  <div>
+                    <h4 className="font-medium text-muted-foreground mb-2">
+                      Select at least {meta.minCourses} course{meta.minCourses > 1 ? 's' : ''}:
+                    </h4>
+                    <Table>
+                      <TableBody>
+                        {chooseCourses.map((course) => (
+                          <TableRow
+                            key={course.id}
+                            className="cursor-pointer"
+                            onClick={() => handleCheckboxClick(course.name)}
+                          >
+                            <TableCell>
+                              <Checkbox
+                                id={course.id}
+                                checked={state.taken.has(course.name)}
+                                onCheckedChange={() => handleCheckboxClick(course.name)}
+                                onClick={(e) => e.stopPropagation()} // prevents double toggle
+                              />
+                            </TableCell>
+                            <TableCell className="font-medium">{course.name}</TableCell>
+                            <TableCell>{course.description}</TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </div>
+                )}
+
+                <Separator className="my-6" />
               </div>
             );
           })}
@@ -896,3 +953,4 @@ export const ComputerScienceBS2 = () => {
     </div>
   );
 };
+

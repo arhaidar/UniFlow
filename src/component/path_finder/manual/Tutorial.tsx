@@ -13,10 +13,10 @@ const ImageWithHoverCard = ({
   return (
     <HoverCard>
       <HoverCardTrigger asChild>
-        <img
-          src={src}
-          className="w-64 h-40 object-cover rounded-xl shadow-md transition-all hover:brightness-75 cursor-pointer"
-        />
+      <img
+        src={src}
+        className="w-full h-full object-cover rounded-xl shadow-md transition-all hover:brightness-75 cursor-pointer"
+      />
       </HoverCardTrigger>
       <HoverCardContent className="w-64 text-sm text-gray-700 font-medium">
         {description}
@@ -26,20 +26,21 @@ const ImageWithHoverCard = ({
 };
 export const Turtorial = () => {
   return (
-    <div className="w-full h-full flex flex-col md:flex-row">
-      <div className="max-w-xs max-h-[10px]"> {/* Set max height to 10px */}
+    <div className="flex gap-4">
+      {/* Left side: vertical stack with equal height */}
+      <div className="flex flex-col gap-4 flex-1">
         <ImageWithHoverCard
           src={img_progress}
-          description="This image shows your progress."
+          description="Tracking your planning process based on major requirement"
         />
-      </div>
-      <div className="max-w-xs max-h-[10px]"> {/* Set max height to 10px */}
         <ImageWithHoverCard
           src={img_table}
-          description="This image represents the course table."
+          description="Click this section to progress your planning"
         />
       </div>
-      <div className="max-w-xs max-h-[10px]"> {/* Set max height to 10px */}
+
+      {/* Right side: single image, full height */}
+      <div className="flex-1">
         <ImageWithHoverCard
           src={img_tree}
           description="This image visualizes the course tree."

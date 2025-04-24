@@ -9,9 +9,7 @@ export const DetailDisplay = () => {
     
     return (
         <div className="flex flex-col h-full">
-            <div className="flex-[8] overflow-auto">
                 <UserProgress state={state} />
-            </div>
         </div>
     )
 }

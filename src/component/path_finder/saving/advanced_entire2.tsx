@@ -1,14 +1,16 @@
 import React, { useState,useEffect,useRef } from "react";
-import { TreeVisualizer } from "../../TREE/TreeVisualizer"
-import { TreeVisualizer2 } from "../../TREE/TreeVisualizer2";
-import { findHighestNodes } from "../../TREE/TreeVisualizer2";
+import Tree from 'react-d3-tree';
+
+import { TreeVisualizer } from "../../../TREE/TreeVisualizer"
+import { TreeVisualizer2 } from "../../../TREE/TreeVisualizer2";
+import { findHighestNodes } from "../../../TREE/TreeVisualizer2";
 
 import './entire.css'
-import { CourseState } from "../../mainpage";
-import { useCourseContext } from '../../mainpage'; //sharing data
+import { CourseState } from "../../../mainpage";
+import { useCourseContext } from '../../../mainpage'; //sharing data
 
-import { Preference } from "../../majorComponents/CS_components/preference";
-import { progress_upadate } from "../../utils/helper_common/progress_update";
+import { Test } from "../../testing/test";
+import { Preference } from "../../majorComponents/preference";
 
 interface Final_ClassWithRank {
   value: string; // The node value (class name)
@@ -28,13 +30,9 @@ interface CourseData {
   [key: string]: CourseNode;
 }
 
-export const PathFinder = () => {
+export const PathFinder2 = () => {
   const { state, dispatch } = useCourseContext();
 
-  useEffect(() => {
-      progress_upadate(dispatch,state)
-  }, []);
-  
   const handleToggleTreeData = (tree: CourseData) => {
     dispatch({ type: 'ADD_TREE', payload: tree });
   };
@@ -46,7 +44,7 @@ export const PathFinder = () => {
     return {
       taken: Array.from(copy_state.taken),
       need_complete: Array.from(copy_state.need_complete),
-      need_elective: Array.from(copy_state.need_specilazation),
+      need_elective: Array.from(copy_state.need_elective),
       need_project: Array.from(copy_state.need_project),
       need_others: Array.from(copy_state.need_others),
       major: 'computer_science',
@@ -101,28 +99,6 @@ export const PathFinder = () => {
       throw error;
     }
   };
-  // const getNextClass = async (wholeList: object) => {
-  //   try {
-  //     const response = await fetch('http://localhost:3000/process/nextclass', {
-  //       method: 'POST',
-  //       headers: {
-  //         'Content-Type': 'application/json',
-  //       },
-  //       body: JSON.stringify(wholeList), // Only stringify here
-  //     });
-  
-  //     if (!response.ok) {
-  //       throw new Error('Network response was not ok');
-  //     }
-  
-  //     const result = await response.json();
-  //     return result;
-  //   } catch (error) {
-  //     console.error('Error fetching next plan:', error);
-  //     throw error;
-  //   }
-  // };
-
 
   const [nextToTake, setNextToTake] = useState<string[][]>([]);
   const [tree, setTree] = useState<CourseData | undefined>(undefined);
@@ -137,7 +113,7 @@ export const PathFinder = () => {
         getTreeData(combinedData)
       ]);
 
-      console.log("FRONTEND DATA:::::", state)
+      console.log("FRONTEND DATA:::::", combinedData)
       console.log("FROM THE BACKEND SERVER:::::Tree", backendtreedata.treedata)
       console.log("FROM THE BACKEND SERVER:::::Next", backendnextdata.plan)
 
@@ -243,7 +219,7 @@ export const PathFinder = () => {
   //========= graduation data getter =========
 
 
-
+  
   // ========= INTERACTIVE DATA ===========
   const takenListRef = useRef(new Set<string>());
 
@@ -290,7 +266,7 @@ export const PathFinder = () => {
   }, [takenListRef.current.size]); // This will update when takenListRef changes
 
 
-  const handleGood = async (classdata: string, index: number) => {
+  const addClass = async (classdata: string, index: number) => {
     console.log("clicked", classdata, "at ", index);
 
     const isChecked = takenListRef.current.has(classdata);
@@ -445,20 +421,164 @@ export const PathFinder = () => {
     setSelected(selected.filter(item => item !== option));
   };
 
-  // // =======================================================================
-  // const takenCompleteCount = Array.from(copy_state.need_complete)
-  //   .filter(item => takenList.has(item)).length;
-  
-  // const takenElectiveCount = Array.from(copy_state.need_elective)
-  //   .filter(item => takenList.has(item)).length;
-  
-  // const takenNeedTakeCount = Array.from(copy_state.need_take)
-  //   .filter(item => takenList.has(item)).length;
-  
-  // // Calculate adjusted total
-  // const adjustedTotal = copy_state.num_total - (takenCompleteCount + takenElectiveCount + takenNeedTakeCount);
-  // // =======================================================================
 
+
+
+  // ==================== Advanced Visualization =============================
+  // Goal: display bottom up progress tree each time a user selected a class using "TREE" react library
+
+  // 1. add a node as a starting root for bottom-up growth (this will be values, strings in "nextList") for initialization
+  // 2. after user click (first only allowed to click init nodes), find all parents of those nodes.
+    // for those all parent(s) from userselected node, check if they are last node(meaning no parent anymore)
+    // if last, add a node as a parent for bottom-up growth
+    // if not last, recursively find all last parents only and display those nodes
+      // also, add temporary node, "..." in the middle of selected node and last parent(s) node
+    // repeating #2 process until no more action from user
+
+  // global node color condition is defined in html code *blue *red *noraml.
+    // Important node -> lack of prereq node:
+    // this node is warning node with different style and only node that user can select to check prereqs for next node
+    // this node is placed between 2 nodes *selected node and *last parent node to warn user which more class to take
+
+  //functions needed
+  // 1. findparents: return all parents of input node
+  // 2. addnode: add a input node to progresstree as parent to input node
+  // 3. checklast: check a input node is last node or not (if it has parent or not)
+  // 4. findlastparents: find all last parents of input node (if it has parent or not)
+  // 5. addtempnode: add a temporary node between selected node and last parent node
+  // 6. addwarningnode: add a warning node between selected node and last parent node
+  // 7. ...
+
+  // use case
+  // init : tree set up with init nodes as roots
+  // user clicks any node among init nodes
+  // system : *adding process...
+    //*adding process = find all parents , check last, add node as parent, add temp node, and add warning node.
+  // user clicks any nodes again
+  // system : repeat *adding process... 
+
+  {/*
+    process sequnece
+
+    init node added 
+    user only select init nodes
+    expand node from selecrted node
+    find all parents of selected node
+    check if last node or not
+    if last(no parent node), add a node as parent for bottom-up growth
+      and check if this takenable or not
+      if takenable(is in nexttotkae), add a node as parent without any condition
+      if not takenable, add a node as parent with warning node
+
+    if not last, recursively find all last parents only and display those in one node
+      and add temporary node, "..." in the middle of selected node and last parent(s) node
+
+    do this process to all parent nodes from 'selected node'
+  */}
+
+
+  interface ProgressNode {
+    name: string; //name of class
+    id: string; //id of class
+    parents?: ProgressNode[]; //parents of class
+    attributes?: { //not sure of this
+      [key: string]: string | number;
+    };
+  }
+
+  // state to keep track of progress tree
+  const [progressTree, setProgressTree] = useState<ProgressNode[]>([]); //initialization of progress tree
+
+  //init node adding
+  const addInitNode = (node: string) => {
+    const newNode: ProgressNode = {
+      name: node,
+      id: node,
+      parents: [], // Initialize with empty parents
+      attributes: {},
+    };
+    setProgressTree([newNode]); // Set the initial node as the root of the tree
+  }
+
+  //add new user selected nodes to init nodes
+  const addNode = (node: string) => {
+    //find parenets
+    const parents = findParent(node); //get all parents of selected node
+
+    // for all parents, check if they are last node or not
+    // we have 2 lists (last and none last)
+    const lastParents = parents.filter(parent => isLastNode(parent)); //get all last parent nodes
+    const lastParentNodes = parents.filter(parent => !isLastNode(parent)).flatMap(parent => findLastParents(parent)); //get all last parent nodes of none last parent nodes
+
+    //for last, add a node as parent for bottom-up growth
+    // check this is takenable or not
+    // if takenable(is in nexttotkae), add a node as parent without any condition
+    // if not takenable, add a node as parent with warning node
+    lastParents.forEach(parent => {
+      const newNode: ProgressNode = {
+        name: parent,
+        id: parent,
+        parents: [], // Initialize with empty parents
+        attributes: {},
+      };
+      setProgressTree(prevTree => [...prevTree, newNode]); // Add the new node to the tree
+    });
+
+    //for none last, add a node but add temporary node, "..." in the middle of selected node and last parent(s) node
+    lastParentNodes.forEach(parent => {
+      const newNode: ProgressNode = {
+        name: parent,
+        id: parent,
+        parents: [], // Initialize with empty parents
+        attributes: {},
+      };
+      setProgressTree(prevTree => [...prevTree, newNode]); // Add the new node to the tree
+    });
+  }
+
+  const isLastNode = (node: string): boolean => {
+    // Check if the node has any parents in the tree  
+    return !tree || !Object.values(tree).some(course => course.children.includes(node));
+  }
+  const findLastParents = (node: string): string[] => {
+    // Check if the node has any parents in the tree  
+    if(tree === undefined) {
+      return [];
+    }
+    const result: string[] = [];
+
+    Object.keys(tree).forEach(key => {
+      const childrenWithMatch = tree[key].children.filter(child => 
+        child.toLowerCase().includes(node.toLowerCase())
+      );
+      if (childrenWithMatch.length > 0) {
+        result.push(tree[key].value);
+      }
+    });
+  
+    return result;
+  };
+
+  const addTempNode = () => {
+    const newNode: ProgressNode = {
+      name: "...",
+      id: "...",
+      parents: [], // Initialize with empty parents but later add last parents
+      attributes: {},
+    };
+    setProgressTree(prevTree => [...prevTree, newNode]); // Add the new node to the tree
+  }
+  const addWarningNode = (node: string) => {
+    //this warning node will be node but when user clicks it, it will display the tree of next node(=parent node)
+    const newNode: ProgressNode = {
+      name: node,
+      id: node,
+      parents: [], // Initialize with empty parents
+      attributes: {},
+    };
+    setProgressTree(prevTree => [...prevTree, newNode]); // Add the new node to the tree
+  }
+  
 
   return (
     <div className="dashboard-container">
@@ -536,7 +656,10 @@ export const PathFinder = () => {
                               <div key={itemIndex} className="class_container">
                                 <a
                                   className={`${newClass}`}
-                                  onClick={newClass === "class_item" ? undefined : () => handleGood(item, index)}
+                                  onClick={newClass === "class_item" ? undefined : () => {
+                                    addClass(item, index);
+                                    
+                                  }}
                                   key={item}
                                 >
                                   {item}
@@ -551,58 +674,27 @@ export const PathFinder = () => {
           </div>
         </div>
       </div>
+
+      {/* display class tree */}
       <div className="second-section">
-        <div className="dropdown-container">
-          <button
-            className="dropdown-button"
-            onClick={() => setIsOpen(!isOpen)}
-          >
-            Select options
-          </button>
 
-          {isOpen && (
-            <ul className="dropdown-options">
-              {options.map((option, index) => (
-                <li
-                  key={index}
-                  className={`option-item ${selected.includes(option) ? 'selected' : ''}`}
-                  onClick={() => toggleSelection(option)}
-                >
-                  {option}
-                  {selected.includes(option) && <span className="checkmark">✓</span>}
-                </li>
-              ))}
-            </ul>
-          )}
-
-          {/* Display selected items in separate boxes */}
-          {selected.length > 0 && (
-            <div className="selected-items-container">
-              {selected.map((item, index) => (
-                <div key={index} className="selected-item">
-                  {item}
-                  <span 
-                    className="remove-btn" 
-                    onClick={(e) => {
-                      e.stopPropagation(); // Prevent dropdown from toggling
-                      removeSelected(item);
-                    }}
-                  >
-                    ×
-                  </span>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-
-        <TreeVisualizer2 
-          data={tree} 
-          userlist={selected} 
-          takenlist={takenListForTree} 
-          nextlist={nextListForTree} 
-        />        
-      </div>      
+      {/* ======================== Advanced Visualization ======================== */}
+        <div className="progress_tree_container">
+          <h5>Progress Tree</h5>
+          <Tree
+              data={progressTree}
+              orientation="vertical"
+              pathFunc="step" // Makes the connection lines straight
+              separation={{ siblings: 1, nonSiblings: 1 }}
+              depthFactor={100} //length of connection line
+              nodeSize={{ x: 130, y: 50 }} // Adjusts node spacing
+              // renderCustomNodeElement={renderRectSvgNode} //custom setting
+              translate={{ x: 100, y: 100 }} // Apply the translation
+              scaleExtent={{ min: 0.2, max: 4 }} // Allow zoom-out + first-render
+              zoomable={true} // Enable zoomable
+            />
+        </div> 
+      </div>     
     </div>
   );
 };

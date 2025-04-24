@@ -14,14 +14,7 @@ export const UserProgress = ({state}:any) => {
                 <Line percent={(selected / total) * 100} strokeWidth={5} strokeColor="#4ade80" className="mb-3" />
                 <p>{`${selected} / ${total}`}</p>
             </div>  
-            <div className="flex flex-col items-start m-0 p-0">
-                {/* check if it has matching string with takenListForTree and nextTotake
-                for css, takenListForTree -> strike trough and red color / nextTotake -> blue color
-                */}
-                {Array.from(list).map((data, idx) => (
-                    <div key={idx}>{data}</div>
-                ))}
-            </div>
+            
     </div>
     );
 

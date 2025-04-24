@@ -5,7 +5,7 @@ import { getApiData } from "../../../utils/api_call/api_call";
 import { progress_upadate } from "../../../utils/helper_common/progress_update";
 import { useCourseContext } from "../../../mainpage";
 import { getGraduationData } from "../../../utils/helper_common/graduation_data";
-import { GraduationData } from "../grad_setting";
+import { GraduationData } from "../saving/grad_setting";
 import { PathFinderAutoDisplay } from "./path_finder_auto";
 
 interface GraduationOption {

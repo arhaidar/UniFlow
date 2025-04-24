@@ -7,9 +7,9 @@ import { Sidebar } from './component/side_bar/sidebar';
 import { getMajorComponents } from './utils/helper_common/get_major_compo';
 import { NextPlanner } from './component/next_planner/next_planner';
 import { CustomPlanner } from './component/custom_planner/custom_planner';
-import { PathFinder } from './component/path_finder/entire'
-import { PathFinder2 } from './component/path_finder/advanced_entire';
-import { PathFinder3 } from './component/path_finder/entire_testing';
+import { PathFinder } from './component/path_finder/saving/entire'
+import { PathFinder2 } from './component/path_finder/saving/advanced_entire';
+import { PathFinder3 } from './component/path_finder/saving/entire_testing';
 import { TreeVisualizer } from './TREE/TreeVisualizer';
 import { GraphVisualizer } from './TREE/GraphVisualizer';
 import { PathFinderContainer, PathFinderManual } from './component/path_finder/manual/PathFinderManual';

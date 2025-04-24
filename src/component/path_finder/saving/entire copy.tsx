@@ -1,11 +1,11 @@
 import React, { useState,useEffect,useRef } from "react";
-import { TreeVisualizer } from "../../TREE/TreeVisualizer"
-import { TreeVisualizer2 } from "../../TREE/TreeVisualizer2";
-import { findHighestNodes } from "../../TREE/TreeVisualizer2";
+import { TreeVisualizer } from "../../../TREE/TreeVisualizer"
+import { TreeVisualizer2 } from "../../../TREE/TreeVisualizer2";
+import { findHighestNodes } from "../../../TREE/TreeVisualizer2";
 
 import './entire.css'
-import { CourseState } from "../../mainpage";
-import { useCourseContext } from '../../mainpage'; //sharing data
+import { CourseState } from "../../../mainpage";
+import { useCourseContext } from '../../../mainpage'; //sharing data
 
 import { Test } from "../../testing/test";
 import { Preference } from "../../majorComponents/preference";

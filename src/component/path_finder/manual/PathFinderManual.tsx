@@ -42,9 +42,7 @@ export const PathFinderManual = () => {
           </PanelGroup>
         </div>
       ) : (
-        <div>
           <StartPathFinder />
-        </div>
       )}
       </div>
   );

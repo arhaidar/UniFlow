@@ -1,14 +1,19 @@
 import React, { useState,useEffect,useRef } from "react";
-
-import { TreeVisualizer } from "../../TREE/TreeVisualizer"
-import { TreeVisualizer2 } from "../../TREE/TreeVisualizer2";
-import { findHighestNodes } from "../../TREE/TreeVisualizer2";
-import { getApiData } from "../../utils/api_call/api_call";
-import { getGraduationData } from "../../utils/helper_common/graduation_data";
-import { useCourseContext } from '../../mainpage'; //sharing data
-import { progress_upadate } from "../../utils/helper_common/progress_update";
+import { TreeVisualizer } from "../../../TREE/TreeVisualizer"
+import { TreeVisualizer2 } from "../../../TREE/TreeVisualizer2";
+import { findHighestNodes } from "../../../TREE/TreeVisualizer2";
 
 import './entire.css'
+import { CourseState } from "../../../mainpage";
+import { useCourseContext } from '../../../mainpage'; //sharing data
+
+import { Preference } from "../../../majorComponents/CS_components/preference";
+import { progress_upadate } from "../../../utils/helper_common/progress_update";
+
+interface Final_ClassWithRank {
+  value: string; // The node value (class name)
+  rank: number;  // How many valid steps upward were counted
+}
 
 interface GraduationOption {
   label: string;
@@ -23,28 +28,118 @@ interface CourseData {
   [key: string]: CourseNode;
 }
 
-export const PathFinder3 = () => {
+export const PathFinder = () => {
   const { state, dispatch } = useCourseContext();
-  // progress_upadate(dispatch,state)
+
   useEffect(() => {
       progress_upadate(dispatch,state)
   }, []);
+  
+  const handleToggleTreeData = (tree: CourseData) => {
+    dispatch({ type: 'ADD_TREE', payload: tree });
+  };
 
   const copy_state = state; //get copy of it (don't touch original)
-  // endpoints: treedata / wholelist
   
+  // console.log(copy_state)
+  const combineStateToJSON = (graduationDate?: string): object => {
+    return {
+      taken: Array.from(copy_state.taken),
+      need_complete: Array.from(copy_state.need_complete),
+      need_elective: Array.from(copy_state.need_specilazation),
+      need_project: Array.from(copy_state.need_project),
+      need_others: Array.from(copy_state.need_others),
+      major: 'computer_science',
+      prefer: copy_state.prefer,
+      num_total: copy_state.num_total,
+      num_project: copy_state.num_project,
+      graduation_date: graduationDate,
+    };
+  };
+
+  const getTreeData = async (wholeList: object) => {
+    try {
+      const response = await fetch('http://localhost:3000/process/treedata', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(wholeList), // Only stringify here
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+
+      const result = await response.json();
+      return result;
+    }
+    catch {
+      console.error('Error fetching next plan:', error);
+      throw error;
+    }
+  }
+  const getWholeList = async (wholeList: object) => {
+    try {
+      const response = await fetch('http://localhost:3000/process/wholelist', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(wholeList), // Only stringify here
+      });
+  
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+  
+      const result = await response.json();
+      return result;
+    } catch (error) {
+      console.error('Error fetching next plan:', error);
+      throw error;
+    }
+  };
+  // const getNextClass = async (wholeList: object) => {
+  //   try {
+  //     const response = await fetch('http://localhost:3000/process/nextclass', {
+  //       method: 'POST',
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //       },
+  //       body: JSON.stringify(wholeList), // Only stringify here
+  //     });
+  
+  //     if (!response.ok) {
+  //       throw new Error('Network response was not ok');
+  //     }
+  
+  //     const result = await response.json();
+  //     return result;
+  //   } catch (error) {
+  //     console.error('Error fetching next plan:', error);
+  //     throw error;
+  //   }
+  // };
+
+
   const [nextToTake, setNextToTake] = useState<string[][]>([]);
   const [tree, setTree] = useState<CourseData | undefined>(undefined);
+
   //init data setting
   const handleNextClass = async () => {
+    const combinedData = combineStateToJSON(); //json objectset to BACKEND
+
     try {
-      const [backendtreedata, backendnextdata] = await Promise.all([
-        getApiData(copy_state, 'treedata'),
-        getApiData(copy_state, 'manualplan')
+      const [backendnextdata, backendtreedata] = await Promise.all([
+        getWholeList(combinedData),
+        getTreeData(combinedData)
       ]);
 
-      // console.log("FROM THE BACKEND SERVER:::::Tree", backendtreedata.treedata)
-      // console.log("FROM THE BACKEND SERVER:::::Next", backendnextdata.plan)
+      console.log("FRONTEND DATA:::::", state)
+      console.log("FROM THE BACKEND SERVER:::::Tree", backendtreedata.treedata)
+      console.log("FROM THE BACKEND SERVER:::::Next", backendnextdata.plan)
 
       if(backendnextdata.success) {
         setNextToTake(backendnextdata.plan)
@@ -53,14 +148,16 @@ export const PathFinder3 = () => {
       else {
         alert("Fail to get next class data");
       }
-      if (backendtreedata.success) {
+      if(backendtreedata.success) {
         const formattedTree: CourseData = Object.entries(backendtreedata.treedata.nodes).reduce(
           (acc, [key, value]) => {
-            const courseNode = value as CourseNode;
+            const courseNode = value as CourseNode; // Explicitly type value
+      
             acc[key] = {
-              ...courseNode,
-              rank: courseNode.rank ?? 0,
+              ...courseNode, // Now TypeScript knows the structure
+              rank: courseNode.rank ?? 0, // Ensure rank is always a number
             };
+      
             return acc;
           },
           {} as CourseData
@@ -82,12 +179,49 @@ export const PathFinder3 = () => {
   };
 
 
-  //========= graduation data setting =========
-  const [graduationDate, setGraduationDate] = useState<string>(''); // grduation date
+  //========= graduation data getter =========
+  const [graduationDate, setGraduationDate] = useState<string>(''); // 졸업일 상태 관리
   const [userGraduationDate, setUserGraduationDate] = useState<GraduationOption[] | undefined>(undefined);
 
-  const graduationOptions = getGraduationData();
+  const generateGraduationOptions = (): GraduationOption[] => {
+    const options: GraduationOption[] = [];
+    const today = new Date();
+    const startYear = today.getFullYear();
+    const startMonth = today.getMonth();
+    const startDate = today.getDate();
 
+    const seasons = ['Spring', 'Summer', 'Fall', 'Winter'] as const;
+    const seasonsnosummer = ['Spring', 'Fall', 'Winter'] as const;
+
+    let startSeason: typeof seasonsnosummer[number];
+    if ((startMonth === 0 && startDate <= 15) || (startMonth === 1) || (startMonth === 2 && startDate < 28)) {
+        startSeason = 'Spring';
+    } else if ((startMonth === 2 && startDate >= 28) || (startMonth === 3) || (startMonth === 4 && startDate < 28)) {
+        startSeason = 'Fall';
+    } else if ((startMonth === 4 && startDate >= 28) || (startMonth === 5) || (startMonth === 6 && startDate < 15)) {
+        startSeason = 'Fall';
+    } else {
+        startSeason = 'Winter';
+    }
+
+    // 시즌 순서 찾기
+    const startIndex = seasonsnosummer.indexOf(startSeason);
+
+    // 4년 동안의 옵션 생성
+    for (let yearOffset = 0; yearOffset < 4; yearOffset++) {
+      for (let seasonOffset = 0; seasonOffset < 3; seasonOffset++) {
+          const year = startYear + yearOffset;
+          const seasonIndex = (startIndex + seasonOffset) % seasonsnosummer.length;
+          options.push({
+              label: `${seasonsnosummer[seasonIndex]} ${year}`,
+              value: `${seasonsnosummer[seasonIndex].toLowerCase()} ${year}`
+          });
+      }
+    }
+
+    return options;
+  };
+  const graduationOptions = generateGraduationOptions();
   const [error, setError] = useState<string>('');
   const handleEntireYearPlan = async () => {
     if (!graduationDate) {
@@ -103,11 +237,11 @@ export const PathFinder3 = () => {
     }
     
     setError('Start');
-
     //get the data and start making all row of each
     handleNextClass();
   };
-  //========= graduation data setting =========
+  //========= graduation data getter =========
+
 
 
   // ========= INTERACTIVE DATA ===========
@@ -119,9 +253,6 @@ export const PathFinder3 = () => {
   const [takenListForTree, setTakenListForTree] = useState<string[]>([]);
   const [nextListForTree, setNextListForTree] = useState<string[]>([]);
   
-  const [selected, setSelected] = useState<string[]>([]);
-  const [isOpen, setIsOpen] = useState(false);
-  const [options, setOptions] = useState<string[]>([]);
 
   const findParent = (childCourse: string) => {
     // for now, using 'testData' change this later 'tree'  
@@ -158,17 +289,10 @@ export const PathFinder3 = () => {
     setTakenList(new Set(takenListRef.current));
   }, [takenListRef.current.size]); // This will update when takenListRef changes
 
-  useEffect(() => {
-    // This ensures we're using the most recent state values
-    setTakenListForTree(Array.from(takenList));
-    setNextListForTree(Array.from(nextList));
-  }, [takenList, nextList]);
-  
-  useEffect(() => {
-    setOptions(findHighestNodes(tree as any)); // Force cast to CourseData
-  }, [tree]);
 
-  const handleStudentClick = async (classdata: string, index: number) => {
+  const handleGood = async (classdata: string, index: number) => {
+    console.log("clicked", classdata, "at ", index);
+
     const isChecked = takenListRef.current.has(classdata);
     let nextAffectedList: string[] = [];
 
@@ -281,15 +405,32 @@ export const PathFinder3 = () => {
       // console.log("updated list", index, cleanedList);
       return cleanedList;
     }); 
+    // console.log("Usestate LIST ", takenList, " Array LIST ", nextList);
+
+
+
+    // ============ UPDATEING TREE =====================
+    //get most recent data of 2 data list
+    // setTakenListForTree(Array.from(takenList));
+    // setNextListForTree(Array.from(nextList));
   };
 
+  useEffect(() => {
+    // This ensures we're using the most recent state values
+    setTakenListForTree(Array.from(takenList));
+    setNextListForTree(Array.from(nextList));
+  }, [takenList, nextList]);
+  
+  const [selected, setSelected] = useState<string[]>([]);
+  const [isOpen, setIsOpen] = useState(false);
+  const [options, setOptions] = useState<string[]>([]);
 
-  // ========= INTERACTIVE DATA ===========
+  useEffect(() => {
+    setOptions(findHighestNodes(tree as any)); // Force cast to CourseData
+  }, [tree]);
 
-
-  // ============== Tree Selection ================
-  // Toggle selection of an option
-  const toggleSelection = (option:string) => {
+   // Toggle selection of an option
+   const toggleSelection = (option:string) => {
     if (selected.includes(option)) {
       // Remove option if already selected
       setSelected(selected.filter(item => item !== option));
@@ -298,17 +439,32 @@ export const PathFinder3 = () => {
       setSelected([...selected, option]);
     }
   };
+
   // Remove a specific selected item
   const removeSelected = (option:string) => {
     setSelected(selected.filter(item => item !== option));
   };
-  // ============== Tree Selection ================
+
+  // // =======================================================================
+  // const takenCompleteCount = Array.from(copy_state.need_complete)
+  //   .filter(item => takenList.has(item)).length;
+  
+  // const takenElectiveCount = Array.from(copy_state.need_elective)
+  //   .filter(item => takenList.has(item)).length;
+  
+  // const takenNeedTakeCount = Array.from(copy_state.need_take)
+  //   .filter(item => takenList.has(item)).length;
+  
+  // // Calculate adjusted total
+  // const adjustedTotal = copy_state.num_total - (takenCompleteCount + takenElectiveCount + takenNeedTakeCount);
+  // // =======================================================================
+
 
   return (
     <div className="dashboard-container">
       <div className="first-section">
         <div className="first-portion">
-
+          {/* Add content for the first portion here */}
           <div className="init_setup_container">
             <h5>Entire Year Planner Options:</h5>
             <select 
@@ -325,24 +481,11 @@ export const PathFinder3 = () => {
                 </option>
               ))}
             </select> 
+            {/* {error && <p style={{ color: 'red' }}>{error}</p>} */}
             <button onClick={handleEntireYearPlan}>START Entire Planner</button>
+            {/* 추가 UI */}
           </div>
-
-          {error === 'Start' && (
-            <>
-              <div>
-                <p>List of must-complete list: {state.need_complete} {state.need_specilazation}</p>
-                <p>List of elective list: {state.need_specilazation_elective}</p>
-                <p>List of project list: {state.need_project}</p>
-              </div>
-            </>
-          )}
-          <div>
-
-          </div>
-
           <div className="entire_planner_table">
-
             {error === 'Start' && userGraduationDate?.map((option, index) => (
                 <div key={option.value} className="graduation_row">
                   <div className="quarter_container">
@@ -390,27 +533,14 @@ export const PathFinder3 = () => {
                             }
 
                             return (
-                              <div key={itemIndex} className="class_container"
-                                onMouseEnter={() => handleMouseEnter(index)}
-                                onMouseLeave={handleMouseLeave}
-                              >
+                              <div key={itemIndex} className="class_container">
                                 <a
                                   className={`${newClass}`}
-                                  onClick={newClass === "class_item" ? undefined : () => handleStudentClick(item, index)}
+                                  onClick={newClass === "class_item" ? undefined : () => handleGood(item, index)}
                                   key={item}
                                 >
                                   {item}
                                 </a>
-                                {/* Comment box appears on hover */}
-                                {/* {
-                                hoveredIndex === index && (
-                                  <div className="comment-box">
-                                    <p className="class-detail-name">{item}</p>
-                                    <p className="class-detail-name">: Intro of Computer Science, Prerequisuite: fuck you</p>
-                                  </div>
-                                )
-                                } */}
-
                               </div>
                             );
                           })}
@@ -418,7 +548,6 @@ export const PathFinder3 = () => {
                   </div>
                 </div>
             ))}
-
           </div>
         </div>
       </div>

@@ -45,24 +45,31 @@ export const Graduation = ({state}:any) => {
 
     };
     return (
-        <div className="init_setup_container">
-            <h5>Entire Year Planner Options:</h5>
-            <select 
-              value={graduationDate} 
-              onChange={(e) => {
-                setGraduationDate(e.target.value);
-                //   setError(''); // 에러 초기화
-                setPlannerStatus(false);
-              }}
-            >
-              <option value="" disabled>Select your graduation date</option>
-              {graduationOptions.map(option => (
-                <option key={option.value} value={option.value}>
-                    {option.label}
-                </option>
-              ))}
-            </select> 
-            <button onClick={handleEntireYearPlan}>START Entire Planner</button>
-          </div>
+      <div className="w-full max-w-xl mx-auto bg-white border border-gray-300 shadow-md rounded-2xl p-6 space-y-6">
+      <h5 className="text-lg font-semibold text-gray-800">Entire Year Planner Options:</h5>
+      
+      <select
+        value={graduationDate}
+        onChange={(e) => {
+          setGraduationDate(e.target.value);
+          setPlannerStatus(false);
+        }}
+        className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+      >
+        <option value="" disabled>Select your graduation date</option>
+        {graduationOptions.map((option) => (
+          <option key={option.value} value={option.value}>
+            {option.label}
+          </option>
+        ))}
+      </select>
+    
+      <button
+        onClick={handleEntireYearPlan}
+        className="w-full py-2 px-4 bg-blue-600 text-white rounded-lg shadow-md hover:bg-blue-700 transition-colors"
+      >
+        START Entire Planner
+      </button>
+    </div>
     )
 }
