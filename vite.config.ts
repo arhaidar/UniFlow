@@ -12,4 +12,13 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"), // '@' points to the src directory
     },
   },
+  build: {
+    outDir: 'dist',
+    assetsDir: 'assets',
+    rollupOptions: {
+      output: {
+        manualChunks: undefined,
+      },
+    },
+  },
 });
