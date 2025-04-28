@@ -1,5 +1,6 @@
 
-
+const LOCAL = "http://localhost:3000/process/";
+const SERVER = "https://scheduler-docker-server.onrender.com/process/";
 // input: api_endpoint, current state
 // output: data responding to 'endpoint'
 export async function getApiData(copy_state: any, api_endpoint:string, graduationDate?: string) {
@@ -25,7 +26,7 @@ export async function getApiData(copy_state: any, api_endpoint:string, graduatio
 
 const apiCall = async (wholeList: object, api_endpoint:string) => {
     try {
-      const response = await fetch(`http://localhost:3000/process/${api_endpoint}`, {
+      const response = await fetch(`https://scheduler-docker-server.onrender.com/process/${api_endpoint}`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

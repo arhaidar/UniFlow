@@ -1,6 +1,23 @@
 
 import { usePathFinder } from './PathFinderContext';
 import { useState,useEffect,useRef } from "react";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Button } from "@/components/ui/button";
+import { Info,ChevronRight  } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuShortcut,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 
 export const UserIntersection = () => {
     const { 
@@ -18,34 +35,34 @@ export const UserIntersection = () => {
     const [takenList, setTakenList] = useState(new Set<string>());
     
     const findParent = (childCourse: string) => {
-    if(tree === undefined) {
-        return [];
-    }
-    const result: string[] = [];
-    Object.keys(tree).forEach(key => {
-        const childrenWithMatch = tree[key].children.filter(child => 
-        child.toLowerCase().includes(childCourse.toLowerCase())
-        );
-        
-        const orandcheck = childrenWithMatch.filter(data => data.includes("OR") || data.includes("AND"))
-        if(orandcheck.length > 0) {
-        console.log(orandcheck);
-        }
+      if(tree === undefined) {
+          return [];
+      }
+      const result: string[] = [];
+      Object.keys(tree).forEach(key => {
+          const childrenWithMatch = tree[key].children.filter(child => 
+          child.toLowerCase().includes(childCourse.toLowerCase())
+          );
+          
+          const orandcheck = childrenWithMatch.filter(data => data.includes("OR") || data.includes("AND"))
+          if(orandcheck.length > 0) {
+          console.log(orandcheck);
+          }
 
-        if (childrenWithMatch.length > 0) {
-        result.push(tree[key].value);
-        }
-    });
-    
-    return result;
+          if (childrenWithMatch.length > 0) {
+          result.push(tree[key].value);
+          }
+      });
+      
+      return result;
     };
 
     const findChildren = (classdata: string): string[] => {
-    if(tree !== undefined) {
-        const node = tree[classdata]; // Access the node directly
-        return node ? node.children : [];
-    }
-    return []
+      if(tree !== undefined) {
+          const node = tree[classdata]; // Access the node directly
+          return node ? node.children : [];
+      }
+      return []
     }
     
     useEffect(() => {
@@ -57,20 +74,39 @@ export const UserIntersection = () => {
     setNextListForTree(Array.from(nextList));
     }, [takenList, nextList]);
       
-    
+    const addTreeView = (classdata:string, index:number, choose:number) => {
+      if(choose == 1) {
+        setSelected1(classdata)
+      }
+      else {
+        setSelected2(classdata)
+      }
+
+      // if(!selected_tree1)
+      //   setSelected1(classdata)
+      // else if(!selected_tree2)
+      //   setSelected2(classdata)
+      // else {
+      //   // random
+      //   if(index % 2 == 0)
+      //     setSelected2(classdata)
+      //   else
+      //     setSelected1(classdata)
+      // }
+    }
     const handleStudentClick = async (classdata: string, index: number) => {
 
-        if(!selected_tree1)
-          setSelected1(classdata)
-        else if(!selected_tree2)
-          setSelected2(classdata)
-        else {
-          // random
-          if(index % 2 == 0)
-            setSelected2(classdata)
-          else
-            setSelected1(classdata)
-        }
+        // if(!selected_tree1)
+        //   setSelected1(classdata)
+        // else if(!selected_tree2)
+        //   setSelected2(classdata)
+        // else {
+        //   // random
+        //   if(index % 2 == 0)
+        //     setSelected2(classdata)
+        //   else
+        //     setSelected1(classdata)
+        // }
         const isChecked = takenListRef.current.has(classdata);
         let nextAffectedList: string[] = [];
 
@@ -162,7 +198,7 @@ export const UserIntersection = () => {
             updatedList[index + 1] = updatedList[index + 1].filter(course => !classesToRemove.has(course));
             }
 
-            console.log("CHECK THIS ONE::::", nextAffectedList);
+            // console.log("CHECK THIS ONE::::", nextAffectedList);
         
             // Use the local affected list which is now complete
             if (nextAffectedList.length > 0) {
@@ -186,78 +222,102 @@ export const UserIntersection = () => {
     };
     
     return (
-      <div className="w-full px-4 mt-6 overflow-x-auto max-h-[70vh] overflow-y-hidden border border-gray-300 min-h-[68vh] ">
-        <div className="flex flex-row gap-3 min-w-fit">
-        {plannerStatus && userGraduationDate?.map((option, index) => (
-            <div className="min-w-[222px] max-h-[70vh] overflow-y-auto">
-              <div className="shadow-md border border-gray-300 bg-[#F4F7FF] rounded-lg p-3 flex flex-col gap-1">
-                <h2 className="text-sm font-semibold text-gray-700 text-center">{option.label}</h2>
-                <hr className="my-0 border-gray-300"/>
-                <div className="flex flex-col items-center gap-1.5">
-                  <div
-                    className="w-1 h-1 bg-black rounded-full"
-                    style={{ animation: 'blink 1.5s infinite', animationDelay: '0s' }}
-                  ></div>
-                  <div
-                    className="w-1 h-1 bg-black rounded-full"
-                    style={{ animation: 'blink 1.5s infinite', animationDelay: '0.2s' }}
-                  ></div>
-                  <div
-                    className="w-1 h-1 bg-black rounded-full"
-                    style={{ animation: 'blink 1.5s infinite', animationDelay: '0.4s' }}
-                  ></div>
+      <div className="w-full px-4 mt-6 h-[75vh] min-h-[68vh]">
+        <ScrollArea className="w-full h-full" type="always">
+          <div className="flex flex-row gap-3 min-w-fit">
+            {plannerStatus && userGraduationDate?.map((option, index) => (
+              <div key={index} className="min-w-[222px] max-h-[80vh]">
+                <div className="shadow-md border border-gray-300 bg-[#F4F7FF] rounded-lg p-3 flex flex-col gap-1">
+                  <h2 className="text-sm font-semibold text-gray-700 text-center">{option.label}</h2>
+                  <hr className="my-0 border-gray-300" />
+                  <div className="flex flex-col items-center gap-1.5">
+                    {[0, 0.2, 0.4].map((delay, idx) => (
+                      <div
+                        key={idx}
+                        className="w-1 h-1 bg-black rounded-full"
+                        style={{ animation: 'blink 1.5s infinite', animationDelay: `${delay}s` }}
+                      ></div>
+                    ))}
+                  </div>
+
+                  <ScrollArea className="h-[calc(80vh-80px)] pr-1">
+                    {nextToTake &&
+                      nextToTake[index]
+                        ?.slice()
+                        .sort((a, b) => {
+                          const inTakenA = takenList.has(a);
+                          const inTakenB = takenList.has(b);
+                          const inNextA = nextList.has(a);
+                          const inNextB = nextList.has(b);
+                          const inPrevA = index - 1 >= 0 && nextToTake[index - 1].includes(a);
+                          const inPrevB = index - 1 >= 0 && nextToTake[index - 1].includes(b);
+
+                          if (inTakenA !== inTakenB) return inTakenA ? -1 : 1;
+                          if (inNextA !== inNextB) return inNextA ? -1 : 1;
+                          if (inPrevA !== inPrevB) return inPrevA ? -1 : 1;
+                          return 0;
+                        })
+                        .map((item, itemIndex) => {
+                          const next = nextList.has(item);
+                          const taken = takenList.has(item);
+                          const existsInPreviousIndex = index - 1 >= 0 && nextToTake[index - 1].includes(item);
+
+                          let newClass = "text-gray-800";
+                          if (taken) newClass = "text-red-500";
+                          else if (existsInPreviousIndex && (taken || next)) newClass = "text-green-500";
+                          else if (next) newClass = "text-blue-500";
+
+                          return (
+                            <div key={itemIndex} className="relative rounded-md bg-white shadow-sm border border-gray-300 px-2 py-1.5 my-0.5 flex justify-between items-center">
+                              <a
+                                className={`block text-sm font-medium cursor-pointer ${newClass}`}
+                                onClick={newClass === "text-gray-800" ? undefined : () => handleStudentClick(item, index)}
+                              >
+                                {item}
+                              </a>
+                              {/* Info Icon with Popover */}
+                              <Popover>
+                                <PopoverTrigger asChild>
+                                  <Button variant="ghost" size="icon" className="h-5 w-5 text-gray-500 hover:text-blue-500">
+                                    <Info className="h-4 w-4" />
+                                  </Button>
+                                </PopoverTrigger>
+                                <PopoverContent className="w-56 text-sm">
+                                  <p><strong>{item}</strong> - Details about this course will go here.</p>
+                                  <p>Course Info</p>
+                                  <DropdownMenu>
+                                    <DropdownMenuTrigger asChild>
+                                      <Button variant="outline" size="icon" className="h-4 w-4">
+                                        {/* add to tree */}
+                                        <ChevronRight className="text-sm text-gray-600" />
+                                      </Button>
+                                    </DropdownMenuTrigger>
+
+                                    <DropdownMenuContent align="end" className="w-[250px]">
+
+                                      <DropdownMenuGroup>
+                                        <p className="text-xs text-muted-foreground pt-1">Select the section</p>
+                                        <DropdownMenuSeparator />
+                                        <DropdownMenuItem onClick={() => addTreeView(item, index,1)}>Section 1</DropdownMenuItem>
+                                        <DropdownMenuItem onClick={() => addTreeView(item, index,2)}>Section 2</DropdownMenuItem>
+                                      </DropdownMenuGroup>
+                                    </DropdownMenuContent>
+                                  </DropdownMenu>
+                            
+                                  
+                                  
+                                </PopoverContent>
+                              </Popover>
+                            </div>
+                          );
+                        })}
+                  </ScrollArea>
                 </div>
-                {/* Filter classes that belong to this graduation option */}
-                {nextToTake &&
-                  nextToTake[index]
-                    ?.slice() // Create a copy to avoid mutating state
-                    .sort((a, b) => {
-                      const inTakenA = takenList.has(a);
-                      const inTakenB = takenList.has(b);
-                      const inNextA = nextList.has(a);
-                      const inNextB = nextList.has(b);
-                      const inPrevA = index - 1 >= 0 && nextToTake[index - 1].includes(a);
-                      const inPrevB = index - 1 >= 0 && nextToTake[index - 1].includes(b);
-
-                      // Sort order: 1. taken(red) 2. nextList(blue) 3. existed in prev index(green)
-                      if (inTakenA !== inTakenB) return inTakenA ? -1 : 1; // Taken first
-                      if (inNextA !== inNextB) return inNextA ? -1 : 1; // Next second
-                      if (inPrevA !== inPrevB) return inPrevA ? -1 : 1; // Prev index third
-                      return 0; // Otherwise, maintain order
-                    })
-                    .map((item, itemIndex) => {
-                      const next = nextList.has(item);
-                      const taken = takenList.has(item);
-                      const existsInPreviousIndex = index - 1 >= 0 && nextToTake[index - 1].includes(item);
-
-                      let newClass = "text-gray-800"; // Default
-
-                      if (taken) {
-                        newClass = "text-red-500";
-                      } else if (existsInPreviousIndex && (taken || next)) {
-                        newClass = "text-green-500";
-                      } else if (next) {
-                        newClass = "text-blue-500";
-                      }
-
-                      return (
-                        <div key={itemIndex} className="rounded-md bg-white shadow-sm border border-gray-300 px-2 py-1.5 my-0.5"
-                        >
-                          <a
-                            className={`block text-sm font-medium cursor-pointer ${newClass}`}
-                            onClick={newClass === "text-gray-800" ? undefined : () => handleStudentClick(item, index)}
-                            key={item}
-                          >
-                            {item}
-                          </a>
-                          <p className="text-sm text-gray-600">class description</p>
-                        </div>
-                      );
-                    })}
               </div>
-            </div>
-        ))}
-      </div>
+            ))}
+          </div>
+          <ScrollBar orientation="horizontal" />
+        </ScrollArea>
       </div>
     )
 }
