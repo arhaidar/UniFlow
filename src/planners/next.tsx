@@ -230,6 +230,7 @@ const NextPage: React.FC<NextPageProps> = ({plan}) => {
                   key={courseIdx}
                 >
                   {course.courseName} <span>{course.sectionId}</span>
+                  <span className="total_rank">Total Rank: {item.total_rank}</span>
                 </th>
               ))}
             </tr>
