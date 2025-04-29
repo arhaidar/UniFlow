@@ -230,9 +230,11 @@ const NextPage: React.FC<NextPageProps> = ({plan}) => {
                   key={courseIdx}
                 >
                   {course.courseName} <span>{course.sectionId}</span>
-                  <span className="total_rank">Total Rank: {item.total_rank}</span>
                 </th>
               ))}
+            </tr>
+            <tr>
+              Toal rank: {item.total_rank}
             </tr>
           </thead>
           <tbody className="combination_details_table">
