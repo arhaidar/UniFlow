@@ -3,7 +3,8 @@ import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 import './css/cs.css'
 
 import { DashBoard } from './component/dashboard/dashboard';
-import { Sidebar } from './component/side_bar/sidebar';
+import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
+import { AppSidebar } from "./components/app-sidebar"
 import { getMajorComponents } from './utils/helper_common/get_major_compo';
 import { NextPlanner } from './component/next_planner/next_planner';
 import { CustomPlanner } from './component/custom_planner/custom_planner';
@@ -296,60 +297,62 @@ export const useCourseContext = () => {
 };
 
 export const MainPage = ({major}:any) => {
-  const [state, dispatch] = useReducer(courseReducer, initialState, () => initialState); //init only for less memeory usage
-  const [componentPage, setComponentPage] = useState<React.ReactElement | null>(null); // Dynamically change the component page
-
-  // 1) Define a local state for dark mode
+  const [state, dispatch] = useReducer(courseReducer, initialState, () => initialState);
+  const [componentPage, setComponentPage] = useState<React.ReactElement | null>(null);
   const [darkMode, setDarkMode] = useState(false);
 
   useEffect(() => {
       if(!major) {
-        setComponentPage(getMajorComponents(state.major, dispatch)); //keep maintaining user major
+        setComponentPage(getMajorComponents(state.major, dispatch));
       } 
       else {
-        setComponentPage(getMajorComponents(major, dispatch)); //error already handled in function.
+        setComponentPage(getMajorComponents(major, dispatch));
       }
   }, [major]);
-  
-  // return (
-  //   <CourseContext.Provider value={{ state, dispatch }}>
-  //     <div className="dashboard">
-  //       <Sidebar />
-  //       {/* MAIN CONTENT */}
-  //       <div className="main-content">
-  //         <Routes>
-  //           <Route path="/progress" element={componentPage} />
-  //           <Route path="/nextplanner" element={<NextPlanner />} />
-  //           <Route path="/customplanner" element={<CustomPlanner />} />
-  //           <Route path="/entireplanner" element={<PathFinder />} />
-  //           <Route path="/majortree" element={<TreeVisualizer />} />
-  //           <Route path="/majorgraph" element={<GraphVisualizer />} />
-  //           <Route path="/test" element={<PathFinder2 />} />
-  //           <Route path="*" element={<DashBoard />} />
-  //         </Routes>
-  //       </div>
-  //     </div>
-  //   </CourseContext.Provider>
-  // );
+
+
+  /*
   return (
     <CourseContext.Provider value={{ state, dispatch }}>
-      {/* 2) Add "dark" class if darkMode is true */}
       <div className={`dashboard ${darkMode ? "dark" : ""}`}>
-        {/* 3) Pass darkMode & setDarkMode to Sidebar */}
-        <Sidebar darkMode={darkMode} setDarkMode={setDarkMode} />
+      <Sidebar darkMode={darkMode} setDarkMode={setDarkMode} />
 
-        <div className="main-content">
-          <Routes>
-            <Route path="/progress" element={componentPage} />
-            <Route path="/nextplanner" element={<NextPlanner />} />
-            <Route path="/customplanner" element={<CustomPlanner />} />
-            <Route path="/entireplanner" element={<PathFinderContainer />} />
-            <Route path="/majortree" element={<TreeVisualizer />} />
-            <Route path="/majorgraph" element={<GraphVisualizer />} />
-            <Route path="/test" element={<PathFinder2 />} />
-            <Route path="*" element={<DashBoard />} />
-          </Routes>
-        </div>
+      <div className="main-content">
+        <Routes>
+          <Route path="/progress" element={componentPage} />
+          <Route path="/nextplanner" element={<NextPlanner />} />
+          <Route path="/customplanner" element={<CustomPlanner />} />
+          <Route path="/entireplanner" element={<PathFinderContainer />} />
+          <Route path="/majortree" element={<TreeVisualizer />} />
+          <Route path="/majorgraph" element={<GraphVisualizer />} />
+          <Route path="/test" element={<PathFinder2 />} />
+          <Route path="*" element={<DashBoard />} />
+        </Routes>
+      </div>
+    </div>
+   </CourseContext.Provider>
+  );  
+  */
+  
+  return (
+    <CourseContext.Provider value={{ state, dispatch }}>
+      <div className={`dashboard ${darkMode ? "dark" : ""}`}>
+        <SidebarProvider>
+          <AppSidebar darkMode={darkMode} setDarkMode={setDarkMode} />
+          <SidebarTrigger />
+          <main className="main-content">
+            <Routes>
+              <Route path="/progress" element={componentPage} />
+              <Route path="/nextplanner" element={<NextPlanner />} />
+              <Route path="/customplanner" element={<CustomPlanner />} />
+              <Route path="/entireplanner" element={<PathFinderContainer />} />
+              <Route path="/majortree" element={<TreeVisualizer />} />
+              <Route path="/majorgraph" element={<GraphVisualizer />} />
+              <Route path="/test" element={<PathFinder2 />} />
+              <Route path="*" element={<DashBoard />} />
+            </Routes>
+          </main>
+        </SidebarProvider>
       </div>
     </CourseContext.Provider>
   );
