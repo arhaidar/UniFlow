@@ -38,7 +38,7 @@ export const AppSidebar: React.FC<AppSidebarProps> = ({ darkMode, setDarkMode })
   };
 
   return (
-    <Sidebar variant="floating">
+    <Sidebar variant="sidebar">
       <SidebarHeader className="sticky top-0 z-10 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="flex items-center gap-2 p-4">
           <School className="h-6 w-6 text-yellow-400 shrink-0" />
@@ -57,7 +57,7 @@ export const AppSidebar: React.FC<AppSidebarProps> = ({ darkMode, setDarkMode })
             <SidebarMenu>
               <SidebarMenuItem>
                 <SidebarMenuButton asChild>
-                  <Link to="/main/progress" className="flex items-center gap-2">
+                  <Link to="/UniFlow/main/progress" className="flex items-center gap-2">
                     <GraduationCap className="h-4 w-4" />
                     <span className="sidebar-expanded-only">Major Progress</span>
                   </Link>
@@ -79,7 +79,7 @@ export const AppSidebar: React.FC<AppSidebarProps> = ({ darkMode, setDarkMode })
                     <SidebarMenuSub>
                       <SidebarMenuSubItem>
                         <SidebarMenuButton asChild>
-                          <Link to="/main/nextplanner" className="flex items-center gap-2 pl-6">
+                          <Link to="/UniFlow/main/nextplanner" className="flex items-center gap-2 pl-6">
                             <Calendar className="h-4 w-4" />
                             <span className="sidebar-expanded-only">Auto</span>
                           </Link>
@@ -87,7 +87,7 @@ export const AppSidebar: React.FC<AppSidebarProps> = ({ darkMode, setDarkMode })
                       </SidebarMenuSubItem>
                       <SidebarMenuSubItem>
                         <SidebarMenuButton asChild>
-                          <Link to="/main/customplanner" className="flex items-center gap-2 pl-6">
+                          <Link to="/UniFlow/main/customplanner" className="flex items-center gap-2 pl-6">
                             <Calendar className="h-4 w-4" />
                             <span className="sidebar-expanded-only">Custom</span>
                           </Link>
@@ -113,7 +113,7 @@ export const AppSidebar: React.FC<AppSidebarProps> = ({ darkMode, setDarkMode })
                     <SidebarMenuSub>
                       <SidebarMenuSubItem>
                         <SidebarMenuButton asChild>
-                          <Link to="/main/entireplanner" className="flex items-center gap-2 pl-6">
+                          <Link to="/UniFlow/main/entireplanner" className="flex items-center gap-2 pl-6">
                             <Calendar className="h-4 w-4" />
                             <span className="sidebar-expanded-only">Manual</span>
                           </Link>
@@ -121,7 +121,7 @@ export const AppSidebar: React.FC<AppSidebarProps> = ({ darkMode, setDarkMode })
                       </SidebarMenuSubItem>
                       <SidebarMenuSubItem>
                         <SidebarMenuButton asChild>
-                          <Link to="/main/test" className="flex items-center gap-2 pl-6">
+                          <Link to="/UniFlow/main/test" className="flex items-center gap-2 pl-6">
                             <Calendar className="h-4 w-4" />
                             <span className="sidebar-expanded-only">Auto</span>
                           </Link>

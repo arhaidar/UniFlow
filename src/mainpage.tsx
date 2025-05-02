@@ -349,7 +349,7 @@ export const MainPage = ({major}:any) => {
               <Route path="/majortree" element={<TreeVisualizer />} />
               <Route path="/majorgraph" element={<GraphVisualizer />} />
               <Route path="/test" element={<PathFinder2 />} />
-              <Route path="/" element={<DashBoard />} />
+              <Route path="*" element={<DashBoard />} />
             </Routes>
           </main>
         </SidebarProvider>

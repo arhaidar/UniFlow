@@ -1,3 +1,4 @@
+// This file is now fully refactored to use Tailwind CSS utility classes only.
 import React, { useState, useEffect } from 'react';
 import { useCourseContext } from '../../mainpage'; //sharing data
 
@@ -39,6 +40,18 @@ interface Course {
   // But let's assume it's just a string name from your JSON
   name?: string;
 }
+
+
+const majorNames: Record<string, string> = {
+  cs: "Computer Science, B.S.",
+  ae: "Aerospace Engineering, B.S.",
+  be: "Biomedical Engineering, B.S.",
+  che: "Chemical Engineering, B.S.",
+  cve: "Civil Engineering, B.S.",
+  ce: "Computer Engineering, B.S.",
+  ee: "Electrical Engineering, B.S.",
+  me: "Mechanical Engineering, B.S.",
+};
 
 export const CustomPlanner:React.FC = () => {
   const { state, dispatch } = useCourseContext();
@@ -145,24 +158,24 @@ export const CustomPlanner:React.FC = () => {
   const [filteredClasses, setFilteredClasses] = useState<string[]>([]);
 
   const getSearchResult = async () => {
-    console.log("user major", major)
-    const combinedData = combineStateToJSON(); //json objectset to BACKEND
-    const result = await getNextList(combinedData);  // Pass the object
-    console.log("FROM THE BACKEND SERVER:::::", result)
-    if (result.success) {
-      setNextQuarterList(result.plan);
-    }
+    // console.log("user major", major)
+    // const combinedData = combineStateToJSON(); //json objectset to BACKEND
+    // const result = await getNextList(combinedData);  // Pass the object
+    // console.log("FROM THE BACKEND SERVER:::::", result)
+    // if (result.success) {
+    //   setNextQuarterList(result.plan);
+    // }
 
-    // //instead use json file
-    // fetch('/src/component/custom_planner/nextlist.json')
-    // .then(response => response.json())
-    //   .then(data => {
-    //     // console.log(data);
-    //     setNextQuarterList(data); // JSON 데이터를 상태에 저장
-    //   })
-    //   .catch(error => {
-    //     console.error("Error loading JSON:", error);
-    //   });
+    //instead use json file
+    fetch('/nextlist.json')
+    .then(response => response.json())
+      .then(data => {
+        console.log(data);
+        setNextQuarterList(data); // JSON 데이터를 상태에 저장
+      })
+      .catch(error => {
+        console.error("Error loading JSON:", error);
+      });
       
   };
 
@@ -194,7 +207,11 @@ export const CustomPlanner:React.FC = () => {
     }
 
     // Filter the nextQuarterList by partial match (case-insensitive)
-    const filtered = nextQuarterList.filter(course =>
+    // const filtered = nextQuarterList.filter(course =>
+    //   course.toLowerCase().includes(query.toLowerCase())
+    // );
+
+    const filtered = (nextQuarterList ?? []).filter(course =>
       course.toLowerCase().includes(query.toLowerCase())
     );
     setFilteredClasses(filtered);
@@ -214,41 +231,31 @@ export const CustomPlanner:React.FC = () => {
   // ===================== END RENDER TO UPDATE DATA ====================
 
   return (
-    <div className='main_container'>
-      <header className="zot-header">
-        <h1 className="zot-title">
-          <a href="/" className="zot-title-link">
-            <span id="zot-bold"></span> Custom Planner
-          </a>
-        </h1>
-        <div className="zot-underline"></div>
-      </header>
-
-      <div className='main'>
-        <div className='major'>
-          <h4>Computer Science B.S</h4>
+    <div className="min-h-screen bg-gray-50 flex flex-col items-center py-8 border-2 border-red-500">
+      <div className="w-full max-w-2xl bg-gray-50 rounded-lg">
+        <div className="mb-6">
+          <h4 className="text-xl font-semibold text-gray-800">
+            {majorNames[state.major] || state.major}
+          </h4>
         </div>
 
         {/* SEARCH BAR */}
-        <div 
-         className={`search_bar ${filteredClasses.length > 0 ? 'has-suggestions' : ''}`}
-        >
+        <div className={`relative mb-6 ${filteredClasses.length > 0 ? 'z-10' : ''}`}>
           <input
             type="text"
-            className="search_input"
+            className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
             value={searchQuery}
             onChange={handleSearchChange}
             placeholder="Search..."
           />
-          
-          <Search className="search_icon" size={20} />
+          <Search className="absolute right-3 top-2.5 text-gray-400" size={20} />
 
           {filteredClasses.length > 0 && (
-            <div className="search_suggestions">
+            <div className="absolute w-full bg-white border border-gray-200 rounded shadow mt-1 max-h-48 overflow-y-auto">
               {filteredClasses.map((course, idx) => (
-                <div 
-                  key={idx} 
-                  className="suggestion_item"
+                <div
+                  key={idx}
+                  className="px-4 py-2 hover:bg-blue-100 cursor-pointer"
                   onClick={() => handleSelectCourse(course)}
                 >
                   {course}
@@ -258,14 +265,13 @@ export const CustomPlanner:React.FC = () => {
           )}
         </div>
 
-
-        {/*seleected searached courses*/}
+        {/* Selected searched courses */}
         {selectedCourses.length > 0 && (
-          <div className="selected_courses">
-            <h4>Selected Courses:</h4>
-            <ul>
+          <div className="mb-6">
+            <h4 className="text-lg font-semibold mb-2">Selected Courses:</h4>
+            <ul className="list-disc list-inside">
               {selectedCourses.map((course, idx) => (
-                <li key={idx}>{course}</li>
+                <li key={idx} className="text-gray-700">{course}</li>
               ))}
             </ul>
           </div>
