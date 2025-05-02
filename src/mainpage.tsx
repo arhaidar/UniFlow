@@ -1,5 +1,5 @@
 import React, { useReducer, useState, useEffect, createContext, useContext } from 'react';
-import { HashRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 import './css/cs.css'
 
 import { DashBoard } from './component/dashboard/dashboard';
@@ -342,13 +342,13 @@ export const MainPage = ({major}:any) => {
           <SidebarTrigger />
           <main className="main-content">
             <Routes>
-              <Route path="progress" element={componentPage} />
-              <Route path="nextplanner" element={<NextPlanner />} />
-              <Route path="customplanner" element={<CustomPlanner />} />
-              <Route path="entireplanner" element={<PathFinderContainer />} />
-              <Route path="majortree" element={<TreeVisualizer />} />
-              <Route path="majorgraph" element={<GraphVisualizer />} />
-              <Route path="test" element={<PathFinder2 />} />
+              <Route path="/progress" element={componentPage} />
+              <Route path="/nextplanner" element={<NextPlanner />} />
+              <Route path="/customplanner" element={<CustomPlanner />} />
+              <Route path="/entireplanner" element={<PathFinderContainer />} />
+              <Route path="/majortree" element={<TreeVisualizer />} />
+              <Route path="/majorgraph" element={<GraphVisualizer />} />
+              <Route path="/test" element={<PathFinder2 />} />
               <Route path="/" element={<DashBoard />} />
             </Routes>
           </main>
