@@ -1,5 +1,5 @@
 import React, { useReducer, useState, useEffect, createContext, useContext } from 'react';
-import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
+import { HashRouter as Router, Routes, Route } from "react-router-dom";
 import './css/cs.css'
 
 import { DashBoard } from './component/dashboard/dashboard';
@@ -349,7 +349,7 @@ export const MainPage = ({major}:any) => {
               <Route path="/majortree" element={<TreeVisualizer />} />
               <Route path="/majorgraph" element={<GraphVisualizer />} />
               <Route path="/test" element={<PathFinder2 />} />
-              <Route path="*" element={<DashBoard />} />
+              <Route path="/" element={<DashBoard />} />
             </Routes>
           </main>
         </SidebarProvider>
