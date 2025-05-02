@@ -57,7 +57,7 @@ export const AppSidebar: React.FC<AppSidebarProps> = ({ darkMode, setDarkMode })
             <SidebarMenu>
               <SidebarMenuItem>
                 <SidebarMenuButton asChild>
-                  <Link to="/UniFlow/main/progress" className="flex items-center gap-2">
+                  <Link to="/main/progress" className="flex items-center gap-2">
                     <GraduationCap className="h-4 w-4" />
                     <span className="sidebar-expanded-only">Major Progress</span>
                   </Link>
@@ -79,7 +79,7 @@ export const AppSidebar: React.FC<AppSidebarProps> = ({ darkMode, setDarkMode })
                     <SidebarMenuSub>
                       <SidebarMenuSubItem>
                         <SidebarMenuButton asChild>
-                          <Link to="/UniFlow/main/nextplanner" className="flex items-center gap-2 pl-6">
+                          <Link to="/main/nextplanner" className="flex items-center gap-2 pl-6">
                             <Calendar className="h-4 w-4" />
                             <span className="sidebar-expanded-only">Auto</span>
                           </Link>
@@ -87,7 +87,7 @@ export const AppSidebar: React.FC<AppSidebarProps> = ({ darkMode, setDarkMode })
                       </SidebarMenuSubItem>
                       <SidebarMenuSubItem>
                         <SidebarMenuButton asChild>
-                          <Link to="/UniFlow/main/customplanner" className="flex items-center gap-2 pl-6">
+                          <Link to="/main/customplanner" className="flex items-center gap-2 pl-6">
                             <Calendar className="h-4 w-4" />
                             <span className="sidebar-expanded-only">Custom</span>
                           </Link>
@@ -97,7 +97,6 @@ export const AppSidebar: React.FC<AppSidebarProps> = ({ darkMode, setDarkMode })
                   </CollapsibleContent>
                 </SidebarMenuItem>
               </Collapsible>
-
 
               <Collapsible defaultOpen className="group/collapsible">
                 <SidebarMenuItem>
@@ -114,7 +113,7 @@ export const AppSidebar: React.FC<AppSidebarProps> = ({ darkMode, setDarkMode })
                     <SidebarMenuSub>
                       <SidebarMenuSubItem>
                         <SidebarMenuButton asChild>
-                          <Link to="/UniFlow/main/entireplanner" className="flex items-center gap-2 pl-6">
+                          <Link to="/main/entireplanner" className="flex items-center gap-2 pl-6">
                             <Calendar className="h-4 w-4" />
                             <span className="sidebar-expanded-only">Manual</span>
                           </Link>
@@ -122,7 +121,7 @@ export const AppSidebar: React.FC<AppSidebarProps> = ({ darkMode, setDarkMode })
                       </SidebarMenuSubItem>
                       <SidebarMenuSubItem>
                         <SidebarMenuButton asChild>
-                          <Link to="/UniFlow/main/test" className="flex items-center gap-2 pl-6">
+                          <Link to="/main/test" className="flex items-center gap-2 pl-6">
                             <Calendar className="h-4 w-4" />
                             <span className="sidebar-expanded-only">Auto</span>
                           </Link>
