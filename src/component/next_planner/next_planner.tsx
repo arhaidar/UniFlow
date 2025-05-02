@@ -136,14 +136,14 @@ export const NextPlanner = () => {
 
   return (
     <div className='main_container'>
-      <header className="zot-header">
+      {/* <header className="zot-header">
         <h1 className="zot-title">
           <a href="/" className="zot-title-link">
             <span id="zot-bold"></span> Next Quarter Planner
           </a>
         </h1>
         <div className="zot-underline"></div>
-      </header>
+      </header> */}
       <div className='main'>
         {/* main page has margin left and right -> takes 2/7 ratio 
         main page only using 5/7 of section of whole page
