@@ -26,7 +26,7 @@ export async function getApiData(copy_state: any, api_endpoint:string, graduatio
 
 const apiCall = async (wholeList: object, api_endpoint:string) => {
     try {
-      const response = await fetch(`${LOCAL}${api_endpoint}`, {
+      const response = await fetch(`${SERVER}${api_endpoint}`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
