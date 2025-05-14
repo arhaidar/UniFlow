@@ -9,8 +9,8 @@ import { useCourseContext,  } from '../../../mainpage';
 import { useEffect, useState } from 'react';
 import { progress_upadate } from '../../../utils/helper_common/progress_update';
 
-import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
-import { Graduation } from './Graduation';
+
+import { Separator } from '@radix-ui/react-separator';
 import { StartPathFinder } from './StartPathFinder';
 
 export const PathFinderManual = () => {
@@ -22,24 +22,19 @@ export const PathFinderManual = () => {
         progress_upadate(dispatch,state)
         setLoading(false); // Set loading to false once data is updated
     }, []);
-  
+
   return (
+
     <div className="h-screen">
       {plannerStatus ? (
-        <div className="h-screen">
-          <PanelGroup direction="horizontal" className="h-full">
-            <Panel defaultSize={70} minSize={20} className="p-2 bg-gray-50">
-              <Section1 />
-            </Panel>
-
-            <PanelResizeHandle className="w-2 flex items-center justify-center group cursor-col-resize">
-              <div className="w-1 h-20 bg-gray-300 rounded group-hover:bg-gray-500 transition-all duration-200" />
-            </PanelResizeHandle>
-
-            <Panel defaultSize={70} minSize={20} className="p-2 bg-gray-100">
-              <Section2 />
-            </Panel>
-          </PanelGroup>
+        <div className='h-full flex flex-row'>
+          <div className="w-[16%]">
+            <Section2 />
+          </div>
+          <Separator className="my-4" />
+          <div className="w-[84%]">
+            <Section1 />
+          </div>
         </div>
       ) : (
           <StartPathFinder />
@@ -55,3 +50,20 @@ export const PathFinderContainer = () => {
     </PathFinderProvider>
   );
 };
+
+
+// <ResizablePanelGroup direction="horizontal" className="h-full">
+//           <ResizablePanel defaultSize={25}>
+//             <div className="h-full">
+//               <Section2 />
+//             </div>
+//           </ResizablePanel>
+
+//           <ResizableHandle withHandle />
+
+//           <ResizablePanel defaultSize={75}>
+//             <div className="h-full">
+//               <Section1 />
+//             </div>
+//           </ResizablePanel>
+//        </ResizablePanelGroup>

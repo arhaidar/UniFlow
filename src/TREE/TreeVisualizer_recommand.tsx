@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import Tree from "react-d3-tree";
 import { useCourseContext } from "../mainpage";
 
-
 const defaultTreeData = {
   "CLASS A": {
     "value": "CLASS A",
@@ -80,7 +79,7 @@ const defaultTreeData = {
     ],
     "rank": 2
   }
-}
+};
 
 export interface TreeNode {
   name: string;
@@ -97,104 +96,111 @@ export interface CourseData {
   [key: string]: CourseNode;
 }
 
-export const findHighestNodes = (data?: CourseData): string[] => {
-  if(!data) return []; //undefined...
-
-  const result: string[] = [];
-  const allKeys = Object.keys(data);
-  const allChildren = Object.values(data)
-    .map(node => node.children)
-    .flat();
-  
-  allKeys.forEach(key => {
-    if (!allChildren.includes(key)) {
-      result.push(data[key].value);
-    }
-  });
-  
-  return result;
+// Function to find nodes that have a specific node in their children
+const findParentNodes = (data: CourseData, nodeKey: string): string[] => {
+  return Object.entries(data)
+    .filter(([key, node]) => node.children.includes(nodeKey))
+    .map(([key]) => key);
 };
 
-const convertToTreeData = (data: CourseData, nodeName: string): TreeNode => {
-  const node = data[nodeName];
-  const children = node.children.map((childName: string) => convertToTreeData(data, childName));
-
-  return {
-    name: node.value,
-    children: children.length > 0 ? children : undefined
-  };
-};
-
-
-const findNodeInTree = (
-  tree: TreeNode, 
-  nodeName: string, 
-  depth: number
-): { node: TreeNode | null, parent: TreeNode | null } => {
-  if (tree.name === nodeName) {
-    return { node: tree, parent: null };
-  }
-
-  if (tree.children) {
-    for (let child of tree.children) {
-      const result = findNodeInTree(child, nodeName, depth + 1);
-      if (result.node) {
-        return { node: result.node, parent: tree };
-      }
+// Get the key for a node by its value (name)
+const getNodeKeyByValue = (data: CourseData, nodeValue: string): string | null => {
+  for (const [key, node] of Object.entries(data)) {
+    if (node.value === nodeValue) {
+      return key;
     }
   }
-
-  return { node: null, parent: null };
+  return null;
 };
 
-const dfsTraverseAndConnect = (
-  data: CourseData, 
-  nodeName: string, 
-  visited: Set<string>, 
-  rootNode: TreeNode, 
-  depth: number
-): void => {
-  if (visited.has(nodeName)) return;
+// Build tree from bottom up, with recursive parent finding
+const buildBottomUpTree = (data: CourseData, startNodeValue: string): TreeNode => {
+  // Get the key for the start node
+  const startNodeKey = getNodeKeyByValue(data, startNodeValue);
   
-  const node = data[nodeName];
-  visited.add(nodeName);
-
-  const treeData = convertToTreeData(data, nodeName);
-  // console.log("tree data", treeData)
-  const { node: existingNode, parent } = findNodeInTree(rootNode, nodeName, depth);
-
-  if (existingNode && parent) {
-    // this one adds everything...
-    // parent.children = parent.children?.filter(child => child !== existingNode);
-    // parent.children?.push(treeData);
-  } else if (!existingNode) {
-    rootNode.children = rootNode.children || [];
-    rootNode.children.push(treeData);
+  if (!startNodeKey) {
+    return { name: startNodeValue };
   }
 
-  node.children.forEach((childName: string) => {
-    dfsTraverseAndConnect(data, childName, visited, rootNode, depth + 1);
-  });
-};
-
-const generateTreeData = (data: CourseData): TreeNode => {
-  const rootNode: TreeNode = {
-    name: "Graduation",
-    children: []
-  };
-
-  const visited = new Set<string>();
-  const highestNodes = findHighestNodes(data);
-  // console.log("highest....", highestNodes);
-
-  highestNodes.forEach(nodeName => {
-    Object.entries(data).forEach(([key, node]) => {
-      if (node.value === nodeName && !visited.has(key)) {
-        dfsTraverseAndConnect(data, key, visited, rootNode, 0);
+  // Process nodes in levels, starting from the bottom
+  const processedNodes = new Set<string>();
+  const rootNode: TreeNode = { name: startNodeValue };
+  
+  // Queue for BFS through the levels from bottom to top
+  let currentLevel = [startNodeKey];
+  let levelNum = 0;
+  
+  // Track the tree structure as we build it
+  const nodeMap = new Map<string, TreeNode>();
+  nodeMap.set(startNodeKey, rootNode);
+  
+  // Build up level by level
+  while (currentLevel.length > 0 && levelNum < 10) { // Prevent infinite loops
+    const nextLevel = new Set<string>();
+    
+    // Process each node in the current level
+    for (const nodeKey of currentLevel) {
+      if (processedNodes.has(nodeKey)) continue;
+      processedNodes.add(nodeKey);
+      
+      // Find all parent nodes (nodes that include this node in their children)
+      const parentKeys = findParentNodes(data, nodeKey);
+      
+      for (const parentKey of parentKeys) {
+        // Get or create the tree node for this parent
+        if (!nodeMap.has(parentKey)) {
+          nodeMap.set(parentKey, { 
+            name: data[parentKey].value, 
+            children: [] 
+          });
+        }
+        
+        // Get or create the current node
+        if (!nodeMap.has(nodeKey)) {
+          nodeMap.set(nodeKey, { 
+            name: data[nodeKey].value, 
+            children: [] 
+          });
+        }
+        
+        // Add current node as a child of the parent node
+        const parentNode = nodeMap.get(parentKey)!;
+        const currentNode = nodeMap.get(nodeKey)!;
+        
+        // Avoid duplicates
+        if (!parentNode.children?.some(child => child.name === currentNode.name)) {
+          parentNode.children = parentNode.children || [];
+          parentNode.children.push(currentNode);
+        }
+        
+        // Add parent to the next level
+        nextLevel.add(parentKey);
       }
-    });
-  });
-
+    }
+    
+    // Move to the next level up
+    currentLevel = Array.from(nextLevel);
+    levelNum++;
+  }
+  
+  // Find nodes with no parents - these are our top-level nodes
+  const topLevelNodes = Array.from(nodeMap.keys())
+    .filter(key => !Array.from(nodeMap.keys()).some(k => 
+      nodeMap.get(k)?.children?.some(child => child.name === data[key]?.value)
+    ))
+    .map(key => nodeMap.get(key)!);
+  
+  // If we have multiple top-level nodes, create a virtual root
+  if (topLevelNodes.length > 1) {
+    return {
+      name: "Prerequisites",
+      children: topLevelNodes
+    };
+  } else if (topLevelNodes.length === 1) {
+    return topLevelNodes[0];
+  }
+  
+  // Fallback to the original node if structure is broken
   return rootNode;
 };
 
@@ -205,47 +211,27 @@ interface TreeVisualizerProps {
   nextlist: string[];
 }
 
-export const TreeVisualizer2: React.FC<TreeVisualizerProps> = ({ data, userlist, takenlist, nextlist }) => {
-  // State to hold the filtered tree
-  const [userSelectedTree, setUserSelectedTree] = useState<TreeNode | null>(null);
+export const Tree_Recommand_Visual: React.FC<TreeVisualizerProps> = ({ data, userlist, takenlist, nextlist }) => {
+  const [bottomUpTree, setBottomUpTree] = useState<TreeNode | null>(null);
   
-  // Default tree data (assuming defaultTreeData is already available)
-  const defaultTreeData = { /* your defaultTreeData */ };
-
   useEffect(() => {
     let treeData;
 
     // Determine if data is available; if not, use the default data
-    if (!data || userlist === "") {
+    if (!data || Object.keys(data).length === 0) {
       treeData = defaultTreeData;
     } else {
       console.log("Getting data", data);
       treeData = data;
     }
 
-    const treedata: TreeNode = generateTreeData(treeData); // Assuming this function converts data to TreeNode structure
-
-    // If userlist is set, find the corresponding node in the tree
     if (userlist) {
-      const findNodeByName = (node: TreeNode, name: string): TreeNode | null => {
-        if (node.name === name) {
-          return node;
-        }
-        if (node.children) {
-          for (let child of node.children) {
-            const result = findNodeByName(child, name);
-            if (result) return result;
-          }
-        }
-        return null;
-      };
-
-      const selectedNode = findNodeByName(treedata, userlist);
-      setUserSelectedTree(selectedNode); // Set the selected node
+      const tree = buildBottomUpTree(treeData, userlist);
+      setBottomUpTree(tree);
     } else {
-      setUserSelectedTree(null); // Reset if no userlist is selected
+      setBottomUpTree(null);
     }
-  }, [data, userlist, takenlist, nextlist]); // Dependencies include all relevant props
+  }, [data, userlist, takenlist, nextlist]);
 
   const renderRectSvgNode = ({ nodeDatum, toggleNode }: any) => {
     const fontSize = 20;
@@ -330,7 +316,7 @@ export const TreeVisualizer2: React.FC<TreeVisualizerProps> = ({ data, userlist,
         overflow: "auto", // Allow scrolling if needed
       }}
     >      
-      {userSelectedTree ? (
+      {bottomUpTree ? (
         <div
           style={{
             width: "95%",
@@ -343,7 +329,7 @@ export const TreeVisualizer2: React.FC<TreeVisualizerProps> = ({ data, userlist,
           }}
         >
           <Tree
-            data={userSelectedTree}
+            data={bottomUpTree}
             orientation="vertical"
             pathFunc="step" // Makes the connection lines straight
             separation={{ siblings: 1, nonSiblings: 1 }}
