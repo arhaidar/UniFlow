@@ -16,6 +16,25 @@ import { ChevronDown } from "lucide-react";
 
 import { Search } from "lucide-react";
 
+import { Button } from "@/components/ui/button";
+import { RefreshCcw } from "lucide-react";
+import { Loader2 } from "lucide-react";
+import { X } from "lucide-react";
+
+
+import {
+  Table,
+  TableCaption,
+  TableHeader,
+  TableHead,
+  TableRow,
+  TableBody,
+  TableCell,
+} from "@/components/ui/table";
+
+import nextListData from './nextlist.json';
+
+
 // Define the interface
 interface TimeSlot {
   days: string[];
@@ -98,7 +117,9 @@ export const CustomPlanner:React.FC = () => {
     //     discussions: TimeSlot[];
     // }
     if (result.success) {
-      setPlan(result.plan);
+      // setPlan(result.plan);
+      const transformedData = result.plan.map((item: any) => item.combination);
+      setPlan(transformedData);
     }
   };
 
@@ -108,7 +129,7 @@ export const CustomPlanner:React.FC = () => {
 
   const getNextList = async (wholeList: object) => {
     try {
-      const response = await fetch('http://localhost:3000/process/nextlist', {
+      const response = await fetch('https://scheduler-docker-server.onrender.com/process/nextlist', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -133,7 +154,7 @@ export const CustomPlanner:React.FC = () => {
 
   const getCustomPlan = async (wholeList: object) => {
     try {
-      const response = await fetch('http://localhost:3000/process/customplan', {
+      const response = await fetch('https://scheduler-docker-server.onrender.com/process/customplan', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -158,24 +179,28 @@ export const CustomPlanner:React.FC = () => {
   const [filteredClasses, setFilteredClasses] = useState<string[]>([]);
 
   const getSearchResult = async () => {
-    // console.log("user major", major)
-    // const combinedData = combineStateToJSON(); //json objectset to BACKEND
-    // const result = await getNextList(combinedData);  // Pass the object
-    // console.log("FROM THE BACKEND SERVER:::::", result)
-    // if (result.success) {
-    //   setNextQuarterList(result.plan);
-    // }
+    console.log("user major", major)
+    const combinedData = combineStateToJSON(); //json objectset to BACKEND
+    const result = await getNextList(combinedData);  // Pass the object
+    console.log("FROM THE BACKEND SERVER:::::", result)
+    if (result.success) {
+      setNextQuarterList(result.plan);
+    }
 
-    //instead use json file
-    fetch('/nextlist.json')
-    .then(response => response.json())
-      .then(data => {
-        console.log(data);
-        setNextQuarterList(data); // JSON 데이터를 상태에 저장
-      })
-      .catch(error => {
-        console.error("Error loading JSON:", error);
-      });
+
+  
+    // instead use json file
+    // fetch('/nextlist.json')
+    // .then(response => response.json())
+    //   .then(data => {
+    //     console.log(data);
+    //     // setNextQuarterList(data); // JSON 데이터를 상태에 저장
+    //   })
+    //   .catch(error => {
+    //     console.error("Error loading JSON:", error);
+    //   });
+
+    // setNextQuarterList(nextListData);
       
   };
 
@@ -231,16 +256,16 @@ export const CustomPlanner:React.FC = () => {
   // ===================== END RENDER TO UPDATE DATA ====================
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col items-center py-8 border-2 border-red-500">
+    <div className="min-h-screen bg-gray-50 flex flex-col items-center py-8">
       <div className="w-full max-w-2xl bg-gray-50 rounded-lg">
         <div className="mb-6">
-          <h4 className="text-xl font-semibold text-gray-800">
+          <h4 className="text-2xl font-semibold text-gray-800 text-center">
             {majorNames[state.major] || state.major}
           </h4>
         </div>
 
-        {/* SEARCH BAR */}
-        <div className={`relative mb-6 ${filteredClasses.length > 0 ? 'z-10' : ''}`}>
+        {/* SEARCH BAR AT THE TOP */}
+        <div className={`relative mb-6 py-10 ${filteredClasses.length > 0 ? 'z-10' : ''}`}> 
           <input
             type="text"
             className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
@@ -248,46 +273,94 @@ export const CustomPlanner:React.FC = () => {
             onChange={handleSearchChange}
             placeholder="Search..."
           />
-          <Search className="absolute right-3 top-2.5 text-gray-400" size={20} />
-
+          <Search className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
           {filteredClasses.length > 0 && (
             <div className="absolute w-full bg-white border border-gray-200 rounded shadow mt-1 max-h-48 overflow-y-auto">
-              {filteredClasses.map((course, idx) => (
-                <div
-                  key={idx}
-                  className="px-4 py-2 hover:bg-blue-100 cursor-pointer"
-                  onClick={() => handleSelectCourse(course)}
-                >
-                  {course}
-                </div>
-              ))}
+              {filteredClasses.map((course, idx) => {
+                const isSelected = selectedCourses.includes(course);
+                return (
+                  <div
+                    key={idx}
+                    className={`px-4 py-2 ${isSelected ? 'bg-gray-200 text-gray-400 cursor-not-allowed' : 'hover:bg-blue-100 cursor-pointer'}`}
+                    onClick={() => !isSelected && handleSelectCourse(course)}
+                    style={{ pointerEvents: isSelected ? 'none' : 'auto' }}
+                  >
+                    {course}
+                  </div>
+                );
+              })}
             </div>
           )}
         </div>
 
-        {/* Selected searched courses */}
+        {/* 2. Selected Courses Table styled like ResultTable */}
         {selectedCourses.length > 0 && (
-          <div className="mb-6">
-            <h4 className="text-lg font-semibold mb-2">Selected Courses:</h4>
-            <ul className="list-disc list-inside">
-              {selectedCourses.map((course, idx) => (
-                <li key={idx} className="text-gray-700">{course}</li>
-              ))}
-            </ul>
+          <div className="w-full max-w-2xl mx-auto mt-8">
+            <Table className="caption-top border-2">
+              <TableCaption className="text-xl font-bold text-black mb-5 text-left">Selected Courses</TableCaption>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Course</TableHead>
+                  {/* <TableHead>Action</TableHead> */}
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {selectedCourses.map((course, idx) => (
+                  <TableRow key={course}>
+                    <TableCell>{course}</TableCell>
+                    <TableCell>
+                      <button
+                        className="text-red-500 hover:bg-red-100 rounded-full p-1"
+                        onClick={() => setSelectedCourses(selectedCourses.filter(c => c !== course))}
+                        aria-label="Remove"
+                      >
+                        <X size={18} />
+                      </button>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
           </div>
         )}
 
-        <div className='nextPlan_page'>
-          <button onClick={handleNextQuarterPlan}>Generate!</button>
-
-          {loading ? (
-            <div className="loading-container">
-              <img src={loadingIcon} alt="Loading..." />
+        {/* 3. Schedules/Generate Schedules section only if at least one course is selected */}
+        {selectedCourses.length > 0 && (
+          <div className="w-full max-w-2xl mx-auto mt-8">
+            <h2 className="text-xl font-bold text-black">Schedules</h2>
+            <div className="border-b-2 border-gray-200 my-2" />
+            <div className="mt-4">
+              <Button
+                className="font-bold bg-blue-500 hover:bg-blue-600 active:bg-blue-700 active:scale-95 transition transform text-white flex items-center justify-center gap-2 px-6 py-2 rounded"
+                onClick={handleNextQuarterPlan}
+                disabled={loading}
+              >
+                {loading ? (
+                  <>
+                    <Loader2 className="w-6 h-6 animate-spin" />
+                    Loading...
+                  </>
+                ) : (
+                  <>
+                    <RefreshCcw className="w-6 h-6" />
+                    Generate Schedules
+                  </>
+                )}
+              </Button>
             </div>
-          ) : plan.length > 0 ? ( // fixed the select # of courses per quarter bug
-            <NextPage plan={plan} />
-          ) : null}
-        </div>
+            <div className="mt-4">
+              {loading ? (
+                <div className="loading-container">
+                  <img src={loadingIcon} alt="Loading..." />
+                </div>
+              ) : plan.length > 0 ? (
+                <NextPage plan={plan} />
+              ) : (
+                <div className="text-center text-gray-500">No schedules generated yet</div>
+              )}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

@@ -1,12 +1,29 @@
 import React, { useEffect, useState } from "react";
 import "./next.css";
 import filterIcon from '../icons/panel.png'
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table"
+import { Input } from "@/components/ui/input"
+import { Button } from "@/components/ui/button"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import { ChevronDown } from "lucide-react"
 
 interface TimeSlot {
   days: string[];
   start: number;
   end: number;
 }
+
 interface Course {
   courseName: string;
   sectionId: string;
@@ -22,20 +39,18 @@ const formatTime = (time: number) => {
   return `${formattedHours}:${minutes.toString().padStart(2, "0")} ${period}`;
 };
 
-interface PlanItem {
-  combination: Course[];
-  total_rank: number;
-}
 interface NextPageProps {
-  plan: PlanItem[];
+  plan: Course[][];
 }
 
 const NextPage: React.FC<NextPageProps> = ({plan}) => {
-
   // ================== NEW STATES FOR FILTERING ==================
   const [showFilterMenu, setShowFilterMenu] = useState(false);
   const [filterText, setFilterText] = useState("");
-  const [filteredPlan, setFilteredPlan] = useState<PlanItem[]>([]);
+  const [filteredPlan, setFilteredPlan] = useState<Course[][]>([]);
+  const [currentPage, setCurrentPage] = useState(0);
+  const combinationsPerPage = 10;
+  const [expandedRow, setExpandedRow] = useState<number | null>(null);
 
   useEffect (() => { // store the original plan in filteredPlan 
     setFilteredPlan(plan);
@@ -46,31 +61,26 @@ const NextPage: React.FC<NextPageProps> = ({plan}) => {
     setShowFilterMenu(!showFilterMenu);
   };
 
-  const handleApplyFilter = () => {
+  useEffect(() => {
     // For example, assume user enters classes separated by commas:
     // e.g. "COMPSCI 161, COMPSCI 171, COMPSCI 178"
     const searchCourses = filterText.split(",").map((s) => s.trim()).filter(Boolean);
-
     if (searchCourses.length === 0) {
-      // If nothing typed, reset to full plan
       setFilteredPlan(plan);
     } else {
-      // Filter plan so each combination must have ALL the classes
-      const newPlan = plan.filter((item) => {
+      const newPlan = plan.filter((combination) => {
         return searchCourses.every((search) =>
-          item.combination.some((course) =>
+          combination.some((course) =>
             course.courseName.toLowerCase().includes(search.toLowerCase())
           )
         );
       });
       setFilteredPlan(newPlan);
     }
+    setCurrentPage(0);
+  }, [filterText, plan]);
 
-    // Optionally close the filter menu after applying
-    setShowFilterMenu(false);
-  };
-
- //=====================EXISTING STATES ========================
+  //=====================EXISTING STATES ========================
   const [selectedNumber, setSelectedNumber] = useState<number>(3);
   const [selectedCombination, setSelectedCombination] = useState<number | null>(null);  
 
@@ -79,23 +89,19 @@ const NextPage: React.FC<NextPageProps> = ({plan}) => {
   >([]);
 
   const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    //reset other # of combination's selected discussion????
-    // pros => get rid of user's mistake
-    // cons => user might want to keep it
     setSelectedDiscussions([]);
-
     setSelectedNumber(Number(event.target.value));
   };
 
-  //plan always stays here => beucase render sequence will get # of class user wants to see to filter!
-  plan = plan.filter(item => item.combination.length === selectedNumber);
-  // plan = plan.filter(item => !item.combination.some(itme2 => itme2.courseName.includes("139W")) && item.combination.length === 3);
-  plan = plan.sort((a,b) => b.total_rank - a.total_rank);
+  // Filter + sort logic for displayed plan
 
-   // Filter + sort logic for displayed plan
-   let displayedPlan = filteredPlan
-   .filter((item) => item.combination.length === selectedNumber)
-   .sort((a, b) => b.total_rank - a.total_rank);
+  console.log("plan", plan)
+  let displayedPlan = filteredPlan.filter((combination) => combination.length === selectedNumber);
+  // Pagination
+  const paginatedPlan = displayedPlan.slice(
+    currentPage * combinationsPerPage,
+    (currentPage + 1) * combinationsPerPage
+  );
 
   const handleDisplayDetails = (combinationIdx: number) => {
     setSelectedCombination(prev => (prev === combinationIdx ? null : combinationIdx));
@@ -125,17 +131,8 @@ const NextPage: React.FC<NextPageProps> = ({plan}) => {
   const daysOverlap = (days1: string[], days2: string[]): boolean => {
     const allDays1 = expandDays(days1);
     const allDays2 = expandDays(days2);
-
-    const check = allDays1.some(day => allDays2.includes(day));
-    if(check) {
-      return true;
-    }
-    else {
-      return false;
-    }
-    // return allDays1.some(day => allDays2.includes(day));
+    return allDays1.some(day => allDays2.includes(day));
   }
-
 
   // Function to handle clicking on a discussion
   const handleDiscussionClick = (
@@ -155,7 +152,6 @@ const NextPage: React.FC<NextPageProps> = ({plan}) => {
       );
 
       if (isAlreadySelected) {
-        // If already selected, remove it from the array (toggle off)
         return prev.filter(
           (d) =>
             !(d.combinationIndex === combinationIndex &&
@@ -163,179 +159,222 @@ const NextPage: React.FC<NextPageProps> = ({plan}) => {
               d.discussionIndex === discussionIndex)
         );
       } else {
-        // Otherwise, add it to the array (toggle on)
-        return [...prev, { combinationIndex, courseIndex, discussionIndex,days, start, end }];
+        return [...prev, { combinationIndex, courseIndex, discussionIndex, days, start, end }];
       }
     });
   };
 
-  
-
-   // ------------------------ RENDER ------------------------
   return (
     <div className="next_pagemain">
-      <div 
-        className="top_bar" 
-        style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}
-      >
-        <img id="filter_icon" src={filterIcon} alt="Filter" onClick={toggleFilterMenu} />
-
-        {/* # of classes dropdown */}
-        <div className="courseNumSelect">
-          <label htmlFor="number-select">Select the number of classes for the quarter</label>
-          <select id="number-select" onChange={handleChange}>
-            <option value="">3</option>
+      {/* Class count dropdown at the top */}
+      <div className="flex items-center gap-2 mb-4">
+        <label htmlFor="number-select" className="text-sm font-medium">
+          Select the number of classes for the quarter
+        </label>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="outline" className="w-[100px]">
+              {selectedNumber} <ChevronDown className="ml-2 h-4 w-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent>
             {[1, 2, 3, 4, 5, 6].map((number) => (
-              <option key={number} value={number}>
+              <Button
+                key={number}
+                variant="ghost"
+                className="w-full justify-start"
+                onClick={() => {
+                  setSelectedNumber(number);
+                  setSelectedDiscussions([]);
+                  setCurrentPage(0);
+                }}
+              >
                 {number}
-              </option>
+              </Button>
             ))}
-          </select>
-        </div>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
+      {/* Filter search bar */}
+      <div className="flex items-center py-4">
+        <Input
+          type="text"
+          placeholder="Filter classes (e.g., COMPSCI 161, COMPSCI 171)"
+          value={filterText}
+          onChange={(e) => setFilterText(e.target.value)}
+          className="w-[400px]"
+        />
+      </div>
+      
+      {/**/}
+      <div className="rounded-md border">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead className="px-6"></TableHead>
+              {Array.from({ length: selectedNumber }).map((_, idx) => (
+                <TableHead key={idx} className="px-6">Class {idx + 1}</TableHead>
+              ))}
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {paginatedPlan.length ? (
+              paginatedPlan.map((combination, idx) => (
+                <React.Fragment key={idx}>
+                  <TableRow>
+                    <TableCell className="px-6">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => setExpandedRow(expandedRow === idx ? null : idx)}
+                        aria-label="Expand row"
+                      >
+                        <ChevronDown className={expandedRow === idx ? "rotate-180 transition-transform" : "transition-transform"} />
+                      </Button>
+                    </TableCell>
+                    {combination.map((course, cIdx) => (
+                      <TableCell key={cIdx} className="px-6">
+                        {course.courseName} <span>{course.sectionId}</span>
+                      </TableCell>
+                    ))}
+                    {/* empty cells if less than selectedNumber */}
+                    {combination.length < selectedNumber &&
+                      Array.from({ length: selectedNumber - combination.length }).map((_, i) => (
+                        <TableCell key={`empty-${i}`} className="px-6"></TableCell>
+                      ))}
+                  </TableRow>
+                  {expandedRow === idx && (
+                    <TableRow>
+                      <TableCell colSpan={selectedNumber + 1} className="bg-muted px-6">
+                        <div className="flex gap-4">
+                          {combination.map((course, courseIdx) => (
+                            <div key={courseIdx} className="w-full">
+                              <div className="font-semibold mb-2">{course.courseName} <span>{course.sectionId}</span></div>
+                              <div className="mb-2">
+                                <div className="font-medium">Lecture</div>
+                                <Table>
+                                  <TableHeader>
+                                    <TableRow>
+                                      <TableHead className="px-6">Days</TableHead>
+                                      <TableHead className="px-6">Start</TableHead>
+                                      <TableHead className="px-6">End</TableHead>
+                                    </TableRow>
+                                  </TableHeader>
+                                  <TableBody>
+                                    <TableRow>
+                                      <TableCell className="px-6">{course.lecture.days.join(", ")}</TableCell>
+                                      <TableCell className="px-6">{formatTime(course.lecture.start)}</TableCell>
+                                      <TableCell className="px-6">{formatTime(course.lecture.end)}</TableCell>
+                                    </TableRow>
+                                  </TableBody>
+                                </Table>
+                              </div>
+                              <div>
+                                <div className="font-medium">Discussions</div>
+                                {course.discussions.length > 0 ? (
+                                  <Table>
+                                    <TableHeader>
+                                      <TableRow>
+                                        <TableHead className="px-6">Days</TableHead>
+                                        <TableHead className="px-6">Start</TableHead>
+                                        <TableHead className="px-6">End</TableHead>
+                                      </TableRow>
+                                    </TableHeader>
+                                    <TableBody>
+                                      {course.discussions.map((discussion, disIndex) => {
+                                        const isSelected = selectedDiscussions.some(
+                                          (d) =>
+                                            d.combinationIndex === currentPage * combinationsPerPage + idx &&
+                                            d.courseIndex === courseIdx &&
+                                            d.discussionIndex === disIndex
+                                        );
+                                        const conflict = selectedDiscussions.some(
+                                          (d) =>
+                                            d.combinationIndex === currentPage * combinationsPerPage + idx &&
+                                            d.courseIndex !== courseIdx &&
+                                            daysOverlap(d.days, discussion.days) &&
+                                            isConflicting(d.start, d.end, discussion.start, discussion.end)
+                                        );
+                                        return (
+                                          <TableRow
+                                            key={disIndex}
+                                            className="discussion_table"
+                                            onClick={() => {
+                                              if (!conflict) {
+                                                handleDiscussionClick(
+                                                  currentPage * combinationsPerPage + idx,
+                                                  courseIdx,
+                                                  disIndex,
+                                                  discussion.days,
+                                                  discussion.start,
+                                                  discussion.end
+                                                );
+                                              }
+                                            }}
+                                            style={{
+                                              textDecoration: conflict && !isSelected ? "line-through" : "none",
+                                              backgroundColor: isSelected ? "yellow" : conflict && !isSelected ? "#d3d3d3" : "transparent",
+                                              cursor: conflict && !isSelected ? "not-allowed" : "pointer",
+                                            }}
+                                          >
+                                            <TableCell className="px-6">{discussion.days.join(", ")}</TableCell>
+                                            <TableCell className="px-6">{formatTime(discussion.start)}</TableCell>
+                                            <TableCell className="px-6">{formatTime(discussion.end)}</TableCell>
+                                          </TableRow>
+                                        );
+                                      })}
+                                    </TableBody>
+                                  </Table>
+                                ) : (
+                                  <div className="text-muted-foreground">No discussions</div>
+                                )}
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  )}
+                </React.Fragment>
+              ))
+            ) : (
+              <TableRow>
+                <TableCell colSpan={selectedNumber + 1} className="h-24 text-center px-6">
+                  No results.
+                </TableCell>
+              </TableRow>
+            )}
+          </TableBody>
+        </Table>
       </div>
 
-      {/* ========== POPUP FILTER MENU ========== */}
-      {showFilterMenu && (
-        <div className="filter_popup">
-          <div className="filter_popup_content">
-            <h3>Filter Combinations</h3>
-            <p>Enter classes separated by commas (e.g., COMPSCI 161, COMPSCI 171)</p>
-            
-            <input
-              type="text"
-              placeholder="COMPSCI 161, COMPSCI 171"
-              value={filterText}
-              onChange={(e) => setFilterText(e.target.value)}
-            />
-            
-            <div style={{ marginTop: "1rem" }}>
-              <button onClick={handleApplyFilter} style={{ marginRight: "8px" }}>
-                Apply
-              </button>
-              <button onClick={toggleFilterMenu}>Close</button>
-            </div>
-          </div>
+      <div className="flex items-center justify-end space-x-2 py-4">
+        <div className="flex-1 text-sm text-muted-foreground">
+          {displayedPlan.length === 0 ? (
+            '0 of 0 combination(s) shown.'
+          ) : (
+            `${currentPage * combinationsPerPage + 1}-${Math.min((currentPage + 1) * combinationsPerPage, displayedPlan.length)} of ${displayedPlan.length} combination(s) shown.`
+          )}
         </div>
-      )}
-
-      {/* ========== TABLE OF COMBINATIONS ========== */}
-      {selectedNumber !== 0 && displayedPlan.map((item, combinationIdx) => (
-        <table key={combinationIdx} className="schedule-table">
-          <thead onClick={() => handleDisplayDetails(combinationIdx)} className="combination_container">
-            <tr className="combination_list">
-              {item.combination.map((course, courseIdx) => (
-                <th
-                  className="combination"
-                  style={{ width: `${100 / item.combination.length}%` }}
-                  key={courseIdx}
-                >
-                  {course.courseName} <span>{course.sectionId}</span>
-                </th>
-              ))}
-            </tr>
-            <tr>
-              Toal rank: {item.total_rank}
-            </tr>
-          </thead>
-          <tbody className="combination_details_table">
-            <tr className="combination_details">
-              {selectedCombination === combinationIdx &&
-                item.combination.map((course, courseIdx) => (
-                  <td
-                    key={courseIdx}
-                    className="course-cell"
-                    style={{ width: `${100 / item.combination.length}%` }}
-                  >
-                    {/* Lecture info */}
-                  <div className="Lec_cell">
-                    <p>Section: {course.sectionId}</p>
-                    <table className="Lec_table">
-                      <tr>
-                        <th>Days</th>
-                        <th>Start</th>
-                        <th>End</th>
-                      </tr>
-                      <tbody>
-                        <tr className="lecture_table">
-                          <th>{course.lecture.days.join(", ")}</th>
-                          <th>{formatTime(course.lecture.start)}</th>
-                          <th>{formatTime(course.lecture.end)}</th>
-                        </tr>
-                      </tbody>
-                    </table>
-                    {/* <p>
-                      Lecture: {course.lecture.days.join(", ")} | {formatTime(course.lecture.start)} - {formatTime(course.lecture.end)}
-                    </p> */}
-                  </div>
-
-                    {/* Discussion info */}
-                  <div className="Dis_cell">
-                    <p>Discussion: </p>
-                    {course.discussions.length > 0 && (
-                    <table className="Dis_table">
-                      <thead>
-                        <tr>
-                          <th>Days</th>
-                          <th>Start</th>
-                          <th>End</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                      {course.discussions.map((discussion, disIndex) => {
-                        // Check if the discussion is selected
-                        const isSelected = selectedDiscussions.some(
-                            (d) =>
-                            d.combinationIndex === combinationIdx &&
-                            d.courseIndex === courseIdx &&
-                            d.discussionIndex === disIndex
-                        );
-                        // Check for conflicts:
-                        // 1. Same combination
-                        // 2. Conflicting time (same course or different courses)
-                        const conflict = selectedDiscussions.some(
-                            (d) =>
-                            d.combinationIndex === combinationIdx && // UNDER Same combination
-                            d.courseIndex !== courseIdx && //differnt class in same combination
-                            ( // Different course or conflicting time
-                              daysOverlap(d.days, discussion.days) &&
-                              isConflicting(d.start, d.end, discussion.start, discussion.end) //conflicting time
-                            )
-                        );
-
-                        return (
-                            <tr
-                              key={disIndex}
-                              className="discussion_table"
-                                onClick={() =>
-                                  {if(!conflict) //prevent user mistake to click onflicted one 
-                                    {handleDiscussionClick(combinationIdx, courseIdx, disIndex, discussion.days, discussion.start, discussion.end)
-                                  }}
-                                }
-                              style={{
-                                  // Strikethrough if conflicting and not selected
-                                  textDecoration: conflict && !isSelected ? "line-through" : "none",
-                                  // Yellow for selected, gray for conflicts
-                                  backgroundColor: isSelected ? "yellow" : conflict && !isSelected ? "#d3d3d3" : "transparent", 
-                                  cursor: "pointer", // Pointer cursor on hover
-                              }}
-                            >
-                            <td>{discussion.days}</td>
-                            <td>{formatTime(discussion.start)}</td>
-                            <td>{formatTime(discussion.end)}</td>
-                            </tr>
-                        );
-                        })}
-                      </tbody>
-                    </table>
-                    )}
-                  </div>
-                  </td>
-                ))
-              }
-            </tr>
-          </tbody>
-        </table>
-      ))}
+        <div className="space-x-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setCurrentPage((p) => Math.max(0, p - 1))}
+            disabled={currentPage === 0}
+          >
+            Previous
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setCurrentPage((p) => p + 1)}
+            disabled={((currentPage + 1) * combinationsPerPage) >= displayedPlan.length}
+          >
+            Next
+          </Button>
+        </div>
+      </div>
     </div>
   );
 };

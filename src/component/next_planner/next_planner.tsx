@@ -11,7 +11,17 @@ import EntirePage from '../../planners/entire';
 // import '../css/cs1_ver2.css';
 // import '../../css/page3.css' //OLD
 import './next_planner.css'
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, Search } from "lucide-react";
+
+
+
+import { ResultTable } from './result_table';
+import { Button } from "@/components/ui/button";
+import { RefreshCcw } from "lucide-react";
+import { Loader2 } from "lucide-react";
+
+import planData from './FUCK.json';
+
 
 // Define the interface
 interface TimeSlot {
@@ -30,6 +40,21 @@ interface Final_ClassWithRank {
   value: string; // The node value (class name)
   rank: number;  // How many valid steps upward were counted
 }
+
+
+
+const majorNames: Record<string, string> = {
+  cs: "Computer Science, B.S.",
+  ae: "Aerospace Engineering, B.S.",
+  be: "Biomedical Engineering, B.S.",
+  che: "Chemical Engineering, B.S.",
+  cve: "Civil Engineering, B.S.",
+  ce: "Computer Engineering, B.S.",
+  ee: "Electrical Engineering, B.S.",
+  me: "Mechanical Engineering, B.S.",
+};
+
+
 
 export const NextPlanner = () => {
   const { state, dispatch } = useCourseContext();
@@ -83,14 +108,36 @@ export const NextPlanner = () => {
     const result = await getNextPlan(combinedData);  // Pass the object
     console.log("FROM THE BACKEND SERVER:::::", result)
     if (result.success) {
-      setPlan(result.plan);
+      // setPlan(result.plan);
+      const transformedData = result.plan.map((item: any) => item.combination);
+      setPlan(transformedData);
     }
+    //   // Save result.plan as JSON
+    //   const jsonData = JSON.stringify(result.plan, null, 2);
+    //   const blob = new Blob([jsonData], { type: 'application/json' });
+    //   const url = window.URL.createObjectURL(blob);
+    //   const link = document.createElement('a');
+    //   link.href = url;
+    //   link.download = 'FUCK.json';
+    //   document.body.appendChild(link);
+    //   link.click();
+    //   document.body.removeChild(link);
+    //   window.URL.revokeObjectURL(url);
+    // }
+    // try {
+    //   // Transform the data to match Course[][] format
+    //   const transformedData = planData.map((item: any) => item.combination);
+    //   console.log("Transformed plan data:", transformedData);
+    //   setPlan(transformedData);
+    // } catch (error){
+    //   console.error('Error loading plan:', error);
+    // }
   };
   
   // Function to send the request
   const getNextPlan = async (wholeList: object) => {
     try {
-      const response = await fetch('http://localhost:3000/process/nextPlan', {
+      const response = await fetch('https://scheduler-docker-server.onrender.com/process/nextPlan', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -133,94 +180,55 @@ export const NextPlanner = () => {
   useEffect(() => {
   }, []);
   // ===================== END RENDER TO UPDATE DATA ====================
-
+  
   return (
-    <div className='main_container'>
-      {/* <header className="zot-header">
-        <h1 className="zot-title">
-          <a href="/" className="zot-title-link">
-            <span id="zot-bold"></span> Next Quarter Planner
-          </a>
-        </h1>
-        <div className="zot-underline"></div>
-      </header> */}
-      <div className='main'>
-        {/* main page has margin left and right -> takes 2/7 ratio 
-        main page only using 5/7 of section of whole page
-        there are many div, line those up in vertically
-        */}
-
-        <div className='major'>
-          {/*
-            this pages has
-            1) simply h5 tag with "Computer Science"
-            2) simply p tag with "Check your selection"
-          */}
-          <h4>Computer Science B.S</h4>
+  // testing new layout
+    <div className="min-h-screen bg-gray-50 flex flex-col items-center py-8 ">
+      <div className="w-full max-w-2xl bg-gray-50 rounded-lg">
+        <div className="mb-6">
+          <h4 className="text-2xl font-semibold text-gray-800 text-center">
+            {majorNames[state.major] || state.major}
+          </h4>
         </div>
-
-        <div className="container">
-          <p className='p_stlye'>Selection Result</p>
-          {/* Collapsible Sections */}
-          <div className="button_selections">
-            {[
-              { label: "Can Take", value: "nextavilable" },
-              { label: "Completed", value: "taken" },
-              { label: "Preference", value: "prefer" },
-              { label: "Others", value: "need_others" },
-            ].map(({ label, value }) => (
-              <div
-                key={label}
-                className={`selections ${selected === value ? "selected" : ""}`}
-                onClick={() => toggleSelection(value)}
-              >
-                <span className="font-semibold">{label}</span>
-                <ChevronDown
-                  className={`transition-transform ${selected === value ? "rotate-180" : ""}`}
-                />
-              </div>
-            ))}
-          </div>
-
-          {/* Selected List Output */}
-          <div className="list_container">
-            {selected === "nextavilable" && (
-              <p>{nextavilable.join(" , ") || "No courses"}</p>
+        <ResultTable nextavilable={nextavilable} />
+      </div>
+      
+      <div className="w-full max-w-2xl mx-auto mt-8">
+        <h2 className="text-xl font-bold text-black">Schedules</h2>
+        <div className="border-b-2 border-gray-200 my-2" />
+        <div className="mt-4">
+          {/* <Button className="font-bold bg-blue-500 hover:bg-blue-600 active:bg-blue-700 active:scale-95 transition transform text-white flex items-center gap-2 px-6 py-2 rounded">
+            <RefreshCcw className="w-6 h-6 font-bold text-xl" /> Generate Schedules
+          </Button> */}
+          <Button
+            className="font-bold bg-blue-500 hover:bg-blue-600 active:bg-blue-700 active:scale-95 transition transform text-white flex items-center justify-center gap-2 px-6 py-2 rounded"
+            onClick={handleNextQuarterPlan}
+            disabled={loading}
+          >
+            {loading ? (
+              <>
+                <Loader2 className="w-6 h-6 animate-spin" />
+                Loading...
+              </>
+            ) : (
+              <>
+                <RefreshCcw className="w-6 h-6" />
+                Generate Schedules
+              </>
             )}
-            {selected === "taken" && (
-              <p>{Array.from(state.taken).join(" , ") || "No courses"}</p>
-            )}
-            {selected === "prefer" && (
-              <p>{Array.from(state.prefer).join(" , ") || "No courses"}</p>
-            )}
-            {selected === "need_others" && (
-              <div>
-                <h5 className="font-semibold">Specialization:</h5>
-                <p>{state.specialization || "None selected"}</p>
-
-                <h5 className="font-semibold mt-2">Remaining Classes to Take:</h5>
-                <p>{remainingClasses || "0"}</p>
-
-                <h5 className="font-semibold mt-2">Remaining Projects to Take:</h5>
-                <p>{remainingProjects || "0"}</p>
-              </div>
-            )}
-          </div>
+          </Button>
         </div>
-
-        
-        {/* <button onClick={handleNextQuarterPlanner}>Start Generating...</button> */}
-        <div className='nextPlan_page'>
-          {/* <h5 className="next_text">Next Quarter Planner</h5> */}
-          <button onClick={handleNextQuarterPlan}>Submit!</button>
-
+        <div className="mt-4">
           {loading ? (
-            <div className="loading-container">
-              <img src={loadingIcon} alt="Loading..." />
-            </div>
-          ) : plan.length > 0 ? (
+            // <div className="flex justify-center">
+            //   <Loader2 className="w-8 h-8 animate-spin" />
+            // </div>
+            null
+          ) : plan && plan.length > 0 ? (
             <NextPage plan={plan} />
-          ) : null}
+          ) : (
+            <div className="text-center text-gray-500">No schedules generated yet</div>
+          )}
         </div>
       </div>
     </div>
